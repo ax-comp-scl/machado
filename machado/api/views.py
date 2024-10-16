@@ -19,6 +19,8 @@ from haystack.query import SearchQuerySet
 from rest_framework import viewsets
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
+from rest_framework import status
+from rest_framework.decorators import action
 
 from machado.api.serializers import JBrowseFeatureSerializer
 from machado.api.serializers import JBrowseGlobalSerializer
@@ -36,8 +38,10 @@ from machado.api.serializers import FeatureProteinMatchesSerializer
 from machado.api.serializers import FeaturePublicationSerializer
 from machado.api.serializers import FeatureSequenceSerializer
 from machado.api.serializers import FeatureSimilaritySerializer
+from machado.api.serializers import InsertOrganismSerializer
 from machado.api.serializers import OrganismIDSerializer
-from machado.loaders.common import retrieve_organism, retrieve_feature_id
+from machado.loaders.common import retrieve_organism, retrieve_feature_id, insert_organism
+from machado.loaders.exceptions import ImportingError
 from machado.models import Analysis, Analysisfeature, Cvterm, Organism, Pub
 from machado.models import Feature, Featureloc, Featureprop, FeatureRelationship
 
@@ -994,3 +998,71 @@ class FeatureSimilarityViewSet(viewsets.GenericViewSet):
     def dispatch(self, *args, **kwargs):
         """Dispatch."""
         return super(FeatureSimilarityViewSet, self).dispatch(*args, **kwargs)
+
+class InsertOrganismViewSet(viewsets.GenericViewSet):
+    """ViewSet for inserting organisms into the system."""
+
+    @swagger_auto_schema(
+        operation_summary="Insert a new organism",
+        operation_description="Endpoint to insert a new organism into the system.",
+        request_body=InsertOrganismSerializer,  # Define o corpo esperado da requisição
+        responses={
+            201: openapi.Response(
+                description="Organism inserted successfully",
+                examples={
+                    "application/json": {
+                        "message": "Organism inserted successfully"
+                    }
+                }
+            ),
+            400: openapi.Response(
+                description="Genus and species are required",
+                examples={
+                    "application/json": {
+                        "error": "Genus and species are required."
+                    }
+                }
+            ),
+            409: openapi.Response(
+                description="Conflict when inserting the organism (e.g. duplicate entry)",
+                examples={
+                    "application/json": {
+                        "error": "Organism already exists."
+                    }
+                }
+            ),
+        }
+    )
+    @action(detail=False, methods=['post'])
+    def insert(self, request):
+        """Handle the POST request for inserting organisms."""
+        genus = request.data.get('genus')
+        species = request.data.get('species')
+        abbreviation = request.data.get('abbreviation')
+        common_name = request.data.get('common_name')
+        infraspecific_name = request.data.get('infraspecific_name')
+        comment = request.data.get('comment')
+
+        if not genus or not species:
+            return Response({"error": "Genus and species are required."}, status=status.HTTP_400_BAD_REQUEST)
+
+        return self.handle_insert(genus, species, abbreviation, common_name, infraspecific_name, comment)
+
+    def handle_insert(
+        self, genus: str, species: str, abbreviation: str = None, 
+        common_name: str = None, infraspecific_name: str = None, 
+        comment: str = None
+    ):
+        """Handle the actual insertion of the organism."""
+        try:
+            insert_organism(
+                genus=genus,
+                species=species,
+                abbreviation=abbreviation,
+                common_name=common_name,
+                infraspecific_name=infraspecific_name,
+                comment=comment,
+            )
+            return Response({"message": "Organism inserted successfully"}, status=status.HTTP_201_CREATED)
+        except ImportingError as e:
+            return Response({"error": str(e)}, status=status.HTTP_409_CONFLICT)
