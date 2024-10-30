@@ -1,0 +1,193 @@
+from rest_framework.response import Response
+from rest_framework import viewsets, status
+from django.contrib.auth.models import User
+from rest_framework.decorators import action
+from rest_framework.authtoken.models import Token
+from django.contrib.auth import authenticate
+from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
+
+#Swagger
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
+
+from .serializers import UserSerializer
+
+class PublicUserActions(viewsets.GenericViewSet):
+    permission_classes = [AllowAny]
+
+    @swagger_auto_schema(
+        operation_summary="User Login",
+        operation_description="Authenticate a user and return an authentication token.",
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                'username': openapi.Schema(type=openapi.TYPE_STRING, description='Username'),
+                'password': openapi.Schema(type=openapi.TYPE_STRING, description='Password'),
+            }
+        ),
+        responses={
+            200: openapi.Response(
+                description="Login successful",
+                examples={"application/json": {"token": "your_auth_token"}}
+            ),
+            401: openapi.Response(
+                description="Unauthorized - User not exists or password is incorrect",
+                examples={"application/json": "User not exists or password is incorrect"}
+            ),
+        }
+    )
+    @action(detail=False, methods=['post'])
+    def login(self, request):
+        user = authenticate(request, username=request.data.get('username'), password=request.data.get('password'))
+        if user:
+            token, created = Token.objects.get_or_create(user=user)
+            return Response({'token': token.key}, status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_401_UNAUTHORIZED, data="User not exists or password is incorrect")
+
+class AuthenticatedUserActions(viewsets.GenericViewSet):
+    permission_classes = [IsAuthenticated]
+
+    @swagger_auto_schema(
+        operation_summary="User Logout",
+        operation_description="Invalidate the user's authentication token to log them out.",
+        responses={
+            200: openapi.Response(description="Logout successful"),
+            400: openapi.Response(description="Token not exists")
+        }
+    )
+    @action(detail=False, methods=['post'])
+    def logout(self, request):
+        token = request.auth
+        if token:
+            token.delete()
+            return Response(status=status.HTTP_200_OK, data="Logout success")
+        return Response(status=status.HTTP_400_BAD_REQUEST, data="Token not exists")
+
+class AdminUserActions(viewsets.GenericViewSet):
+    permission_classes = [IsAdminUser]
+
+    @swagger_auto_schema(
+        operation_summary="List all users",
+        operation_description="Retrieve a list of all users in the system.",
+        responses={200: UserSerializer(many=True)}
+    )
+    @action(detail=False, methods=['get'])
+    def list(self, request):
+        users = User.objects.all()
+        serializer = UserSerializer(users, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @swagger_auto_schema(
+        operation_summary="Create a new user",
+        operation_description="Create a new user with the specified username, password, and optional fields like first name, last name, email, and admin status.",
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                'username': openapi.Schema(type=openapi.TYPE_STRING, description='Username (required)'),
+                'password': openapi.Schema(type=openapi.TYPE_STRING, description='Password (required)'),
+                'first_name': openapi.Schema(type=openapi.TYPE_STRING, description='First name (optional)'),
+                'last_name': openapi.Schema(type=openapi.TYPE_STRING, description='Last name (optional)'),
+                'email': openapi.Schema(type=openapi.TYPE_STRING, description='Email address (optional)'),
+                'is_staff': openapi.Schema(
+                    type=openapi.TYPE_INTEGER,
+                    description='Admin status, 1 for True, 0 for False (optional)',
+                    enum=[0, 1]
+                )
+            },
+            required=['username', 'password']
+        ),
+        responses={
+            201: openapi.Response(description="User created"),
+            400: openapi.Response(description="User not created - Username and password are required")
+        }
+    )
+    @action(detail=False, methods=['post'])
+    def create(self, request):
+        requestUsername = request.data.get('username')
+        requestPassword = request.data.get('password')
+        requestFirstName = request.data.get('first_name', '')
+        requestLastName = request.data.get('last_name', '')
+        requestEmail = request.data.get('email', '')
+        requestIsStaff = request.data.get('is_staff')
+        if requestUsername == None or requestPassword == None:
+            return Response(status=status.HTTP_400_BAD_REQUEST, data="Username and password are required")
+        if requestIsStaff == 1:
+            requestIsStaff = True
+        else:
+            requestIsStaff = False
+
+        user = User.objects.create_user(
+            username=requestUsername, password=request.data.get('password'), first_name=requestFirstName, 
+            last_name=requestLastName, email=requestEmail, is_staff=requestIsStaff
+        )
+        if user:
+            return Response(status=status.HTTP_201_CREATED, data="User created")
+        return Response(status=status.HTTP_400_BAD_REQUEST, data="User not created")
+
+    @swagger_auto_schema(
+        operation_summary="Delete a user",
+        operation_description="Delete a user by their ID.",
+        responses={
+            200: openapi.Response(description="User deleted"),
+            404: openapi.Response(description="User not found")
+        }
+    )
+    @action(detail=False, methods=['delete'])
+    def delete(self, request, id=None):
+        user = User.objects.filter(pk=id).first()
+        if user:
+            user.delete()
+            return Response(status=status.HTTP_200_OK, data="User deleted")
+        return Response(status=status.HTTP_404_NOT_FOUND, data="User not found")
+
+    @swagger_auto_schema(
+        operation_summary="Update user information",
+        operation_description="Update an existing user's details, where is_staff should be 1 (True) or 0 (False).",
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                'username': openapi.Schema(type=openapi.TYPE_STRING, description='Username'),
+                'first_name': openapi.Schema(type=openapi.TYPE_STRING, description='First name'),
+                'last_name': openapi.Schema(type=openapi.TYPE_STRING, description='Last name'),
+                'email': openapi.Schema(type=openapi.TYPE_STRING, description='Email address'),
+                'password': openapi.Schema(type=openapi.TYPE_STRING, description='Password'),
+                'is_staff': openapi.Schema(
+                    type=openapi.TYPE_INTEGER, 
+                    description='Admin status, 1 for True, 0 for False',
+                    enum=[0, 1]
+                )
+            }
+        ),
+        responses={
+            200: openapi.Response(description="User updated"),
+            404: openapi.Response(description="User not found")
+        }
+    )
+    @action(detail=False, methods=['put'])
+    def update(self, request, id=None):
+        user = User.objects.filter(pk=id).first()
+        if user:
+            username = request.data.get('username')
+            firstName = request.data.get('first_name')
+            lastName = request.data.get('last_name')
+            email = request.data.get('email')
+            password = request.data.get('password')
+            isStaff = request.data.get('is_staff')
+            if username:
+                user.username = username
+            if firstName:
+                user.first_name = firstName
+            if lastName:
+                user.last_name = lastName
+            if email:
+                user.email = email
+            if password:
+                user.set_password(password)
+            if isStaff:
+                if isStaff == 1:
+                    user.is_staff = True
+                elif isStaff == 0:
+                    user.is_staff = False
+            user.save()
+            return Response(status=status.HTTP_200_OK, data="User updated")
+        return Response(status=status.HTTP_404_NOT_FOUND, data="User not found")
