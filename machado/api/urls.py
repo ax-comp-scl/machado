@@ -13,7 +13,7 @@ from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
 from machado.api import views
-
+from machado.api.views import OrganismViewSet
 
 router = routers.SimpleRouter(trailing_slash=False)
 
@@ -32,7 +32,9 @@ router.register(
 router.register(r"autocomplete", views.autocompleteViewSet, basename="autocomplete")
 
 router.register(r"organism/id", views.OrganismIDViewSet, basename="organism_id")
+
 router.register(r"feature/id", views.FeatureIDViewSet, basename="feature_id")
+
 router.register(
     r"feature/ontology/(?P<feature_id>\d+)",
     views.FeatureOntologyViewSet,
@@ -84,6 +86,8 @@ router.register(
     views.FeatureSimilarityViewSet,
     basename="feature_similarity",
 )
+
+router.register(r'organisms', OrganismViewSet, basename='organism')
 
 baseurl = None
 if hasattr(settings, "MACHADO_URL"):

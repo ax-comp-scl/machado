@@ -21,8 +21,9 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import action
+from rest_framework.permissions import IsAuthenticated
 
-from machado.api.serializers import JBrowseFeatureSerializer
+from machado.api.serializers import JBrowseFeatureSerializer, OrganismSerializer
 from machado.api.serializers import JBrowseGlobalSerializer
 from machado.api.serializers import JBrowseNamesSerializer
 from machado.api.serializers import JBrowseRefseqSerializer
@@ -1066,3 +1067,11 @@ class InsertOrganismViewSet(viewsets.GenericViewSet):
             return Response({"message": "Organism inserted successfully"}, status=status.HTTP_201_CREATED)
         except ImportingError as e:
             return Response({"error": str(e)}, status=status.HTTP_409_CONFLICT)
+
+class OrganismViewSet(viewsets.ModelViewSet):
+    queryset = Organism.objects.all()
+    serializer_class = OrganismSerializer
+    permission_classes = [IsAuthenticated]
+
+    def destroy(self, request, *args, **kwargs):
+        return Response({"detail": "Método não permitido."}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
