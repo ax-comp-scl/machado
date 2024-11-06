@@ -8,7 +8,7 @@
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import serializers
 
-from machado.models import Cvterm, Feature, Featureloc
+from machado.models import Cvterm, Feature, Featureloc, Organism
 from machado.models import FeatureRelationship
 from machado.models import Pub
 
@@ -469,3 +469,16 @@ class InsertOrganismSerializer(serializers.Serializer):
     common_name = serializers.CharField(required=False, help_text="Common name of the organism.")
     infraspecific_name = serializers.CharField(required=False, help_text="Infraspecific name of the organism.")
     comment = serializers.CharField(required=False, help_text="Additional comments about the organism.")
+
+class OrganismSerializer(serializers.Serializer):
+    genus = serializers.CharField(required=True, help_text="The genus of the organism.")
+    species = serializers.CharField(required=True, help_text="The species of the organism.")
+    abbreviation = serializers.CharField(required=False, help_text="Abbreviation of the organism name.")
+    common_name = serializers.CharField(required=False, help_text="Common name of the organism.")
+    infraspecific_name = serializers.CharField(required=False, help_text="Infraspecific name of the organism.")
+    comment = serializers.CharField(required=False, help_text="Additional comments about the organism.")
+
+    def create(self, validated_data):
+        # Personalize a criação aqui, se necessário
+        organism = Organism.objects.create(**validated_data)
+        return organism
