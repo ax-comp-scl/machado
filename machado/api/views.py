@@ -47,6 +47,9 @@ from machado.models import Feature, Featureloc, Featureprop, FeatureRelationship
 
 from re import escape, search, IGNORECASE
 
+from machado.history.service import createAndSaveHistory
+from django.contrib.auth.models import User
+from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
 
 try:
     CACHE_TIMEOUT = settings.CACHE_TIMEOUT
@@ -1000,6 +1003,7 @@ class FeatureSimilarityViewSet(viewsets.GenericViewSet):
         return super(FeatureSimilarityViewSet, self).dispatch(*args, **kwargs)
 
 class InsertOrganismViewSet(viewsets.GenericViewSet):
+    permission_classes = [IsAuthenticated]
     """ViewSet for inserting organisms into the system."""
 
     @swagger_auto_schema(
@@ -1046,12 +1050,12 @@ class InsertOrganismViewSet(viewsets.GenericViewSet):
         if not genus or not species:
             return Response({"error": "Genus and species are required."}, status=status.HTTP_400_BAD_REQUEST)
 
-        return self.handle_insert(genus, species, abbreviation, common_name, infraspecific_name, comment)
+        return self.handle_insert(genus, species, abbreviation, common_name, infraspecific_name, comment, user=request.user)
 
     def handle_insert(
         self, genus: str, species: str, abbreviation: str = None, 
         common_name: str = None, infraspecific_name: str = None, 
-        comment: str = None
+        comment: str = None, user = User
     ):
         """Handle the actual insertion of the organism."""
         try:
@@ -1063,6 +1067,7 @@ class InsertOrganismViewSet(viewsets.GenericViewSet):
                 infraspecific_name=infraspecific_name,
                 comment=comment,
             )
+            createAndSaveHistory(user, "POST", "Insert an organism")
             return Response({"message": "Organism inserted successfully"}, status=status.HTTP_201_CREATED)
         except ImportingError as e:
             return Response({"error": str(e)}, status=status.HTTP_409_CONFLICT)
