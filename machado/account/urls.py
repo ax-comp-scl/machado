@@ -20,6 +20,6 @@ urlpatterns = [
 
     #AdminUserActions para deletar usuário (exige autenticação e que o usuário seja admin)
     path("", userViews.AdminUserActions.as_view({'post': 'create', 'get': 'list'}), name="user_get_create"),
-    path("<int:id>", userViews.AdminUserActions.as_view({'delete': 'delete', 'put': 'update'}), name="user_delete_update"),
-
+    path("<int:id>", userViews.AdminUserActions.as_view({'delete': 'delete', 'put': 'update', 'get': 'listUserById'}), name="user_delete_update_list"),
+    path("username/<str:username>", userViews.AdminUserActions.as_view({'get': 'listUserByUsername'}), name="user_list_by_username"),
 ]

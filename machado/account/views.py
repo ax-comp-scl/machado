@@ -5,6 +5,7 @@ from rest_framework.decorators import action
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import authenticate
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
+from rest_framework.exceptions import NotFound
 
 #Swagger
 from drf_yasg.utils import swagger_auto_schema
@@ -41,7 +42,8 @@ class PublicUserActions(viewsets.GenericViewSet):
         user = authenticate(request, username=request.data.get('username'), password=request.data.get('password'))
         if user:
             token, created = Token.objects.get_or_create(user=user)
-            return Response({'token': token.key}, status=status.HTTP_200_OK)
+            serializer = UserSerializer(user, many=False)
+            return Response({'token': token.key, 'user': serializer.data}, status=status.HTTP_200_OK)
         return Response(status=status.HTTP_401_UNAUTHORIZED, data="User not exists or password is incorrect")
 
 class AuthenticatedUserActions(viewsets.GenericViewSet):
@@ -69,12 +71,78 @@ class AdminUserActions(viewsets.GenericViewSet):
     @swagger_auto_schema(
         operation_summary="List all users",
         operation_description="Retrieve a list of all users in the system.",
-        responses={200: UserSerializer(many=True)}
+        responses={
+            200: openapi.Response(
+                description="A list of all users",
+                schema=UserSerializer(many=True)
+            ),
+            404: openapi.Response(
+                description="No users found",
+                examples={"application/json": {"msg": "No users found."}}
+            ),
+        }
     )
     @action(detail=False, methods=['get'])
     def list(self, request):
         users = User.objects.all()
+        if not users.exists():
+            return Response({"msg": "No users found."}, status=status.HTTP_404_NOT_FOUND)
+
         serializer = UserSerializer(users, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    @swagger_auto_schema(
+        operation_summary="Retrieve user by ID",
+        operation_description="Fetch details of a user by providing their unique ID.",
+        manual_parameters=[
+            openapi.Parameter(
+                'id', 
+                openapi.IN_QUERY, 
+                description="Unique ID of the user", 
+                type=openapi.TYPE_INTEGER, 
+                required=True
+            )
+        ],
+        responses={
+            200: UserSerializer(),
+            404: 'User not found'
+        }
+    )
+    @action(detail=False, methods=['get'])
+    def listUserById(self, request, id=None):
+        user = User.objects.filter(pk=id).first()
+        if not user:
+            return Response({"msg": "User not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = UserSerializer(user, many=False)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @swagger_auto_schema(
+        operation_summary="Retrieve user by username",
+        operation_description="Fetch details of a user by providing their unique username.",
+        manual_parameters=[
+            openapi.Parameter(
+                'username',
+                openapi.IN_QUERY,
+                description="Unique username of the user",
+                type=openapi.TYPE_STRING,
+                required=True
+            )
+        ],
+        responses={
+            200: UserSerializer(),
+            404: openapi.Response(description="User not found")
+        }
+    )
+    @action(detail=False, methods=['get'])
+    def listUserByUsername(self, request, username=None):
+
+        try:
+            user = User.objects.get(username=username)
+        except User.DoesNotExist:
+            raise NotFound({"msg": "User not found."})
+        
+        serializer = UserSerializer(user, many=False)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @swagger_auto_schema(

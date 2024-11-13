@@ -470,7 +470,7 @@ class InsertOrganismSerializer(serializers.Serializer):
     infraspecific_name = serializers.CharField(required=False, help_text="Infraspecific name of the organism.")
     comment = serializers.CharField(required=False, help_text="Additional comments about the organism.")
 
-class OrganismSerializer(serializers.Serializer):
+class OrganismSerializer(serializers.ModelSerializer):
     genus = serializers.CharField(required=True, help_text="The genus of the organism.")
     species = serializers.CharField(required=True, help_text="The species of the organism.")
     abbreviation = serializers.CharField(required=False, help_text="Abbreviation of the organism name.")
@@ -478,7 +478,6 @@ class OrganismSerializer(serializers.Serializer):
     infraspecific_name = serializers.CharField(required=False, help_text="Infraspecific name of the organism.")
     comment = serializers.CharField(required=False, help_text="Additional comments about the organism.")
 
-    def create(self, validated_data):
-        # Personalize a criação aqui, se necessário
-        organism = Organism.objects.create(**validated_data)
-        return organism
+    class Meta:
+        model = Organism
+        fields = ['organism_id', 'genus', 'species', 'abbreviation', 'common_name', 'infraspecific_name', 'comment']
