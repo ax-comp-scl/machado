@@ -3,7 +3,7 @@ from rest_framework import viewsets, status
 from django.contrib.auth.models import User
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAdminUser, AllowAny, IsAuthenticated
-from machado.history.models import History
+from machado.models import History
 
 #Swagger
 from drf_yasg.utils import swagger_auto_schema

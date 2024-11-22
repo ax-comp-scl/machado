@@ -42870,3 +42870,11 @@ CREATE INDEX nd_experiment_analysis_idx2 ON nd_experiment_analysis (analysis_id)
 CREATE INDEX nd_experiment_analysis_idx3 ON nd_experiment_analysis (type_id);
 
 COMMENT ON TABLE nd_experiment_analysis IS 'An analysis that is used in an experiment';
+
+CREATE TABLE history (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER NOT NULL REFERENCES auth_user(id) ON DELETE NO ACTION,
+    description VARCHAR(255) NOT NULL,
+    method VARCHAR(50) NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);

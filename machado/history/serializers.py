@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from machado.history.models import History
+from machado.models import History
 from machado.account.serializers import UserSerializer
 
 class HistorySerializer(serializers.ModelSerializer):

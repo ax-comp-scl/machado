@@ -1,4 +1,4 @@
-from machado.history.models import History
+from machado.models import History
 
 def createAndSaveHistory(user, method, description):
     """
