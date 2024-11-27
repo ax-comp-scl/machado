@@ -155,11 +155,11 @@ class AdminUserActions(viewsets.GenericViewSet):
     def listUserByUsername(self, request, username=None):
 
         try:
-            user = User.objects.get(username=username)
+            user = User.objects.filter(username__icontains=username)
         except User.DoesNotExist:
             raise NotFound({"msg": "User not found."})
         
-        serializer = UserSerializer(user, many=False)
+        serializer = UserSerializer(user, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @swagger_auto_schema(
