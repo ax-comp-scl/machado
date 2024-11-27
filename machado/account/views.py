@@ -12,6 +12,7 @@ from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
 from .serializers import UserSerializer
+import re
 
 class PublicUserActions(viewsets.GenericViewSet):
     permission_classes = [AllowAny]
@@ -163,7 +164,7 @@ class AdminUserActions(viewsets.GenericViewSet):
 
     @swagger_auto_schema(
         operation_summary="Create a new user",
-        operation_description="Create a new user with the specified username, password, and optional fields like first name, last name, email, and admin status.",
+        operation_description="Create a new user with the specified username, email, password, and optional fields like first name, last name, and admin status.",
         request_body=openapi.Schema(
             type=openapi.TYPE_OBJECT,
             properties={
@@ -171,14 +172,14 @@ class AdminUserActions(viewsets.GenericViewSet):
                 'password': openapi.Schema(type=openapi.TYPE_STRING, description='Password (required)'),
                 'first_name': openapi.Schema(type=openapi.TYPE_STRING, description='First name (optional)'),
                 'last_name': openapi.Schema(type=openapi.TYPE_STRING, description='Last name (optional)'),
-                'email': openapi.Schema(type=openapi.TYPE_STRING, description='Email address (optional)'),
+                'email': openapi.Schema(type=openapi.TYPE_STRING, description='Email address (required)'),
                 'is_staff': openapi.Schema(
                     type=openapi.TYPE_INTEGER,
                     description='Admin status, 1 for True, 0 for False (optional)',
                     enum=[0, 1]
                 )
             },
-            required=['username', 'password']
+            required=['username', 'email', 'password']
         ),
         responses={
             201: openapi.Response(description="User created"),
@@ -189,19 +190,27 @@ class AdminUserActions(viewsets.GenericViewSet):
     def create(self, request):
         requestUsername = request.data.get('username')
         requestPassword = request.data.get('password')
+        requestEmail = request.data.get('email')
         requestFirstName = request.data.get('first_name', '')
         requestLastName = request.data.get('last_name', '')
-        requestEmail = request.data.get('email', '')
         requestIsStaff = request.data.get('is_staff')
-        if requestUsername == None or requestPassword == None:
-            return Response(status=status.HTTP_400_BAD_REQUEST, data="Username and password are required")
+        if requestUsername == None or requestPassword == None or requestEmail == None:
+            return Response(status=status.HTTP_400_BAD_REQUEST, data="Username, email and password are required")
+
+        if len(requestUsername) < 3 or len(requestPassword) < 3:
+            return Response(status=status.HTTP_400_BAD_REQUEST, data="Username and password must be at least 3 characters long")
+
+        email_regex = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
+        if not re.match(email_regex, requestEmail):
+            return Response(status=status.HTTP_400_BAD_REQUEST, data="Invalid email format")
+    
         if requestIsStaff == 1:
             requestIsStaff = True
         else:
             requestIsStaff = False
 
         user = User.objects.create_user(
-            username=requestUsername, password=request.data.get('password'), first_name=requestFirstName, 
+            username=requestUsername, password=requestPassword, first_name=requestFirstName, 
             last_name=requestLastName, email=requestEmail, is_staff=requestIsStaff
         )
         if user:
