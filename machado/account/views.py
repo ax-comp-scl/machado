@@ -12,6 +12,7 @@ from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
 from .serializers import UserSerializer
+import re
 
 class PublicUserActions(viewsets.GenericViewSet):
     permission_classes = [AllowAny]
@@ -195,6 +196,14 @@ class AdminUserActions(viewsets.GenericViewSet):
         requestIsStaff = request.data.get('is_staff')
         if requestUsername == None or requestPassword == None or requestEmail == None:
             return Response(status=status.HTTP_400_BAD_REQUEST, data="Username, email and password are required")
+
+        if len(requestUsername) < 3 or len(requestPassword) < 3:
+            return Response(status=status.HTTP_400_BAD_REQUEST, data="Username and password must be at least 3 characters long")
+
+        email_regex = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
+        if not re.match(email_regex, requestEmail):
+            return Response(status=status.HTTP_400_BAD_REQUEST, data="Invalid email format")
+    
         if requestIsStaff == 1:
             requestIsStaff = True
         else:
