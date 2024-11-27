@@ -22,14 +22,19 @@ class PublicUserActions(viewsets.GenericViewSet):
         request_body=openapi.Schema(
             type=openapi.TYPE_OBJECT,
             properties={
-                'username': openapi.Schema(type=openapi.TYPE_STRING, description='Username'),
+                'email': openapi.Schema(type=openapi.TYPE_STRING, description='Email'),
                 'password': openapi.Schema(type=openapi.TYPE_STRING, description='Password'),
-            }
+            },
+            required=['email', 'password']
         ),
         responses={
             200: openapi.Response(
                 description="Login successful",
                 examples={"application/json": {"token": "your_auth_token"}}
+            ),
+            400: openapi.Response(
+                description="Bad Request - Email and password are required",
+                examples={"application/json": "Email and password are required"}
             ),
             401: openapi.Response(
                 description="Unauthorized - User not exists or password is incorrect",
@@ -39,11 +44,22 @@ class PublicUserActions(viewsets.GenericViewSet):
     )
     @action(detail=False, methods=['post'])
     def login(self, request):
-        user = authenticate(request, username=request.data.get('username'), password=request.data.get('password'))
-        if user:
-            token, created = Token.objects.get_or_create(user=user)
-            serializer = UserSerializer(user, many=False)
-            return Response({'token': token.key, 'user': serializer.data}, status=status.HTTP_200_OK)
+        email = request.data.get('email')
+        password = request.data.get('password')
+        
+        if (email == None or password == None):
+            return Response(status=status.HTTP_400_BAD_REQUEST, data="Email and password are required")
+        
+        try:
+            userRequest = User.objects.get(email=email)
+            user = authenticate(request, username=userRequest.username, password=password)
+            if user:
+                token, created = Token.objects.get_or_create(user=user)
+                serializer = UserSerializer(user, many=False)
+                return Response({'token': token.key, 'user': serializer.data}, status=status.HTTP_200_OK)
+        except User.DoesNotExist:
+            pass
+        
         return Response(status=status.HTTP_401_UNAUTHORIZED, data="User not exists or password is incorrect")
 
 class AuthenticatedUserActions(viewsets.GenericViewSet):
