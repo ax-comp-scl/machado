@@ -87,7 +87,7 @@ router.register(
     basename="feature_similarity",
 )
 
-router.register(r'organisms', OrganismViewSet, basename='organism')
+router.register(r'organism', OrganismViewSet, basename='organism')
 
 baseurl = None
 if hasattr(settings, "MACHADO_URL"):
@@ -101,7 +101,6 @@ schema_view = get_schema_view(
 
 urlpatterns = [
     path("", include(router.urls)),
-    path("organism", views.InsertOrganismViewSet.as_view({'post': 'insert'}), name="organism_test"),
     re_path(
         r"^(?P<format>\.json|\.yaml)$",
         schema_view.without_ui(cache_timeout=0),

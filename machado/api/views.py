@@ -1074,9 +1074,6 @@ class InsertOrganismViewSet(viewsets.GenericViewSet):
             return Response({"error": str(e)}, status=status.HTTP_409_CONFLICT)
 
 class OrganismViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
     queryset = Organism.objects.all()
     serializer_class = OrganismSerializer
-    permission_classes = [IsAuthenticated]
-
-    def destroy(self, request, *args, **kwargs):
-        return Response({"detail": "Método não permitido."}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
