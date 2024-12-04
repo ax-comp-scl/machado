@@ -40,11 +40,16 @@ from machado.api.serializers import FeaturePublicationSerializer
 from machado.api.serializers import FeatureSequenceSerializer
 from machado.api.serializers import FeatureSimilaritySerializer
 from machado.api.serializers import InsertOrganismSerializer
+from machado.api.serializers import RelationsOntologySerializer
 from machado.api.serializers import OrganismIDSerializer
 from machado.loaders.common import retrieve_organism, retrieve_feature_id, insert_organism
 from machado.loaders.exceptions import ImportingError
+from machado.loaders.ontology import OntologyLoader
 from machado.models import Analysis, Analysisfeature, Cvterm, Organism, Pub
 from machado.models import Feature, Featureloc, Featureprop, FeatureRelationship
+
+from tempfile import NamedTemporaryFile
+import obonet
 
 from re import escape, search, IGNORECASE
 
@@ -1077,3 +1082,32 @@ class OrganismViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     queryset = Organism.objects.all()
     serializer_class = OrganismSerializer
+
+class RelationsOntologyViewSet(viewsets.GenericViewSet):
+    serializer_class = RelationsOntologySerializer
+    permission_classes = [IsAuthenticated]
+
+    @action(detail=False, methods=['post'])
+    def insert(self, request):
+        """Handle the POST request for inserting relations ontology."""
+        file = request.data.get('file')
+        # Load the ontology file
+        try:
+            file_bytes = file.read()
+
+            with NamedTemporaryFile(mode="w+b", delete=True) as temp_file:
+                temp_file.write(file_bytes)
+                G = obonet.read_obo(temp_file.name)
+
+        except Exception as e:
+            return Response({'error': f'Error loading ontology file {e}'}, status=status.HTTP_400_BAD_REQUEST)
+
+        cv_name = "relationship"
+
+        # Initializing ontology
+        ontology = OntologyLoader(cv_name)
+
+        for data in G.graph["typedefs"]:
+            ontology.store_type_def(data)
+
+        return Response({"success": "File uploaded"}, status=status.HTTP_200_OK)

@@ -481,3 +481,6 @@ class OrganismSerializer(serializers.ModelSerializer):
     class Meta:
         model = Organism
         fields = ['organism_id', 'genus', 'species', 'abbreviation', 'common_name', 'infraspecific_name', 'comment']
+
+class RelationsOntologySerializer(serializers.ModelSerializer):
+    file = serializers.FileField(required=True, help_text="Relations Ontology file obo.")

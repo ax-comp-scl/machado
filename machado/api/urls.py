@@ -89,6 +89,8 @@ router.register(
 
 router.register(r'organism', OrganismViewSet, basename='organism')
 
+router.register(r'ontology', views.RelationsOntologyViewSet, basename='ontology')
+
 baseurl = None
 if hasattr(settings, "MACHADO_URL"):
     baseurl = "{}/api/".format(settings.MACHADO_URL)
