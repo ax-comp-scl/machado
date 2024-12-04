@@ -23,7 +23,7 @@ from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 
-from machado.api.serializers import JBrowseFeatureSerializer, OrganismSerializer
+from machado.api.serializers import JBrowseFeatureSerializer, OrganismSerializer, SequenceOntologySerializer
 from machado.api.serializers import JBrowseGlobalSerializer
 from machado.api.serializers import JBrowseNamesSerializer
 from machado.api.serializers import JBrowseRefseqSerializer
@@ -50,6 +50,7 @@ from machado.models import Feature, Featureloc, Featureprop, FeatureRelationship
 
 from tempfile import NamedTemporaryFile
 import obonet
+from tqdm import tqdm
 
 from re import escape, search, IGNORECASE
 
@@ -1091,6 +1092,7 @@ class RelationsOntologyViewSet(viewsets.GenericViewSet):
     def insert(self, request):
         """Handle the POST request for inserting relations ontology."""
         file = request.data.get('file')
+        
         # Load the ontology file
         try:
             file_bytes = file.read()
@@ -1100,7 +1102,7 @@ class RelationsOntologyViewSet(viewsets.GenericViewSet):
                 G = obonet.read_obo(temp_file.name)
 
         except Exception as e:
-            return Response({'error': f'Error loading ontology file {e}'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': f'Error loading ontology file: {str(e)}'}, status=status.HTTP_400_BAD_REQUEST)
 
         cv_name = "relationship"
 
@@ -1111,3 +1113,48 @@ class RelationsOntologyViewSet(viewsets.GenericViewSet):
             ontology.store_type_def(data)
 
         return Response({"success": "File uploaded"}, status=status.HTTP_200_OK)
+    
+
+class SequenceOntologyViewSet(viewsets.GenericViewSet):
+    serializer_class = SequenceOntologySerializer
+    permission_classes = [IsAuthenticated]
+
+    @action(detail=False, methods=['post'])
+    def insert(self, request):
+        file = request.data.get('file')
+        
+        # Load the ontology file
+        try:
+            file_bytes = file.read()
+
+            with NamedTemporaryFile(mode="w+b", delete=True) as temp_file:
+                temp_file.write(file_bytes)
+                G = obonet.read_obo(temp_file.name)
+
+        except Exception as e:
+            return Response({'error': f'Error loading ontology file: {str(e)}'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+        cv_name = G.graph["default-namespace"][0]
+        cv_definition = G.graph["data-version"]
+
+        ontology = OntologyLoader(cv_name, cv_definition)
+
+        verbosity = 1
+
+        # Load typedefs as Dbxrefs and Cvterm
+        for typedef in tqdm(
+            G.graph["typedefs"], disable=False if verbosity > 0 else True
+        ):
+            ontology.store_type_def(typedef)
+
+
+        for n, data in tqdm(
+            G.nodes(data=True), disable=False if verbosity > 0 else True
+        ):
+            ontology.store_term(n, data)
+
+        for u, v, type in tqdm(
+            G.edges(keys=True), disable=False if verbosity > 0 else True
+        ):
+            ontology.store_relationship(u, v, type)

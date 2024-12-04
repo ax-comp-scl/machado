@@ -307,7 +307,7 @@ class OntologyLoader(object):
         else:
             type_dbxref = Dbxref.objects.get(db=self.db_global, accession=type)
             type_cvterm = Cvterm.objects.get(dbxref=type_dbxref)
-
+  
         cvrel = CvtermRelationship.objects.create(
             type_id=type_cvterm.cvterm_id,
             subject_id=subject_cvterm.cvterm_id,
