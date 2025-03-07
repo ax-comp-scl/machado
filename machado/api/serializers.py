@@ -8,7 +8,7 @@
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import serializers
 
-from machado.models import Cvterm, Feature, Featureloc
+from machado.models import Cvterm, Feature, Featureloc, Organism
 from machado.models import FeatureRelationship
 from machado.models import Pub
 
@@ -461,3 +461,29 @@ class FeatureLocationSerializer(serializers.Serializer):
     strand = serializers.IntegerField()
     ref = serializers.CharField()
     jbrowse_url = serializers.CharField()
+
+class InsertOrganismSerializer(serializers.Serializer):
+    genus = serializers.CharField(required=True, help_text="The genus of the organism.")
+    species = serializers.CharField(required=True, help_text="The species of the organism.")
+    abbreviation = serializers.CharField(required=False, help_text="Abbreviation of the organism name.")
+    common_name = serializers.CharField(required=False, help_text="Common name of the organism.")
+    infraspecific_name = serializers.CharField(required=False, help_text="Infraspecific name of the organism.")
+    comment = serializers.CharField(required=False, help_text="Additional comments about the organism.")
+
+class OrganismSerializer(serializers.ModelSerializer):
+    genus = serializers.CharField(required=True, help_text="The genus of the organism.")
+    species = serializers.CharField(required=True, help_text="The species of the organism.")
+    abbreviation = serializers.CharField(required=False, help_text="Abbreviation of the organism name.")
+    common_name = serializers.CharField(required=False, help_text="Common name of the organism.")
+    infraspecific_name = serializers.CharField(required=False, help_text="Infraspecific name of the organism.")
+    comment = serializers.CharField(required=False, help_text="Additional comments about the organism.")
+
+    class Meta:
+        model = Organism
+        fields = ['organism_id', 'genus', 'species', 'abbreviation', 'common_name', 'infraspecific_name', 'comment']
+
+class RelationsOntologySerializer(serializers.ModelSerializer):
+    file = serializers.FileField(required=True, help_text="Relations Ontology file obo.")
+
+class SequenceOntologySerializer(serializers.ModelSerializer):
+    file = serializers.FileField(required=True, help_text="Sequence Ontology file obo.")

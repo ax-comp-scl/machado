@@ -6,6 +6,7 @@
 from django.db import models
 
 from machado.decorators import machado_feature_methods, machado_pub_methods
+from django.contrib.auth.models import User
 
 
 class Acquisition(models.Model):
@@ -4104,3 +4105,15 @@ class Treatment(models.Model):
 
     class Meta:
         db_table = "treatment"
+
+class History(models.Model):
+    user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
+    description = models.CharField(max_length=255)
+    method = models.CharField(max_length=50)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.action
+    
+    class Meta:
+        db_table = 'history'
