@@ -76,7 +76,7 @@ docker compose ps
 1. Crie o ambiente virtual:
 
    ```bash
-   python3 -m venv venv
+   python -m venv venv
    ```
 
 2. Ative o ambiente virtual:
