@@ -32,9 +32,9 @@ cd machado
 Crie um arquivo `.env` no diretório raiz do projeto, seguindo o formato do arquivo `.env.example`. Preencha as variáveis de ambiente necessárias, como:
 
 ```env
-POSTGRES_DB=nome_do_banco
-POSTGRES_USER=usuario
-POSTGRES_PASSWORD=senha
+DB_NAME=nome_do_banco
+DB_USER=usuario
+DB_PASSWORD=senha
 ```
 
 ---
