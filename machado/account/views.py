@@ -16,6 +16,7 @@ import re
 
 class PublicUserActions(viewsets.GenericViewSet):
     permission_classes = [AllowAny]
+    authentication_classes = []
 
     @swagger_auto_schema(
         operation_summary="User Login",
