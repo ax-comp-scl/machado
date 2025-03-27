@@ -87,7 +87,7 @@ router.register(
     basename="feature_similarity",
 )
 
-router.register(r'organism', OrganismViewSet, basename='organism')
+router.register(r'organism', views.OrganismViewSet, basename='organism')
 
 router.register(r'ontology', views.RelationsOntologyViewSet, basename='ontology')
 

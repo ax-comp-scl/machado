@@ -1009,14 +1009,17 @@ class FeatureSimilarityViewSet(viewsets.GenericViewSet):
         """Dispatch."""
         return super(FeatureSimilarityViewSet, self).dispatch(*args, **kwargs)
 
-class InsertOrganismViewSet(viewsets.GenericViewSet):
+
+class OrganismViewSet(viewsets.GenericViewSet):
     permission_classes = [IsAuthenticated]
-    """ViewSet for inserting organisms into the system."""
+    serializer_class = OrganismSerializer
+    queryset = Organism.objects.all()
 
     @swagger_auto_schema(
         operation_summary="Insert a new organism",
         operation_description="Endpoint to insert a new organism into the system.",
-        request_body=InsertOrganismSerializer,  # Define o corpo esperado da requisição
+        request_body=InsertOrganismSerializer,
+
         responses={
             201: openapi.Response(
                 description="Organism inserted successfully",
@@ -1044,8 +1047,8 @@ class InsertOrganismViewSet(viewsets.GenericViewSet):
             ),
         }
     )
-    @action(detail=False, methods=['post'])
-    def insert(self, request):
+
+    def create(self, request):
         """Handle the POST request for inserting organisms."""
         genus = request.data.get('genus')
         species = request.data.get('species')
@@ -1079,10 +1082,6 @@ class InsertOrganismViewSet(viewsets.GenericViewSet):
         except ImportingError as e:
             return Response({"error": str(e)}, status=status.HTTP_409_CONFLICT)
 
-class OrganismViewSet(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticated]
-    queryset = Organism.objects.all()
-    serializer_class = OrganismSerializer
 
 class RelationsOntologyViewSet(viewsets.GenericViewSet):
     serializer_class = RelationsOntologySerializer
