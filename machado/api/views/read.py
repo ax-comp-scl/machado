@@ -24,7 +24,9 @@ from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 
 from machado.api.serializers import read as readSerializers
-from machado.loaders.common import retrieve_organism, retrieve_feature_id
+from machado.loaders.common import insert_organism, retrieve_organism, retrieve_feature_id
+from machado.loaders.exceptions import ImportingError
+from machado.loaders.ontology import OntologyLoader
 from machado.models import Analysis, Analysisfeature, Cvterm, Organism, Pub
 from machado.models import Feature, Featureloc, Featureprop, FeatureRelationship
 
@@ -1006,13 +1008,13 @@ class FeatureSimilarityViewSet(viewsets.GenericViewSet):
 
 class OrganismViewSet(viewsets.GenericViewSet):
     permission_classes = [IsAuthenticated]
-    serializer_class = OrganismSerializer
+    serializer_class = readSerializers.OrganismSerializer
     queryset = Organism.objects.all()
 
     @swagger_auto_schema(
         operation_summary="Insert a new organism",
         operation_description="Endpoint to insert a new organism into the system.",
-        request_body=OrganismSerializer,
+        request_body=readSerializers.OrganismSerializer,
 
         responses={
             201: openapi.Response(
@@ -1079,7 +1081,7 @@ class OrganismViewSet(viewsets.GenericViewSet):
 
 
 class RelationsOntologyViewSet(viewsets.GenericViewSet):
-    serializer_class = RelationsOntologySerializer
+    serializer_class = readSerializers.RelationsOntologySerializer
     permission_classes = [IsAuthenticated]
 
     @action(detail=False, methods=['post'])
@@ -1096,7 +1098,7 @@ class RelationsOntologyViewSet(viewsets.GenericViewSet):
                 G = obonet.read_obo(temp_file.name)
 
         except Exception as e:
-            createAndSaveHistory(user)
+            # createAndSaveHistory(user)
             return Response({'error': f'Error loading ontology file: {str(e)}'}, status=status.HTTP_400_BAD_REQUEST)
 
         cv_name = "relationship"
@@ -1111,7 +1113,7 @@ class RelationsOntologyViewSet(viewsets.GenericViewSet):
     
 
 class SequenceOntologyViewSet(viewsets.GenericViewSet):
-    serializer_class = SequenceOntologySerializer
+    serializer_class = readSerializers.SequenceOntologySerializer
     permission_classes = [IsAuthenticated]
 
     @action(detail=False, methods=['post'])
