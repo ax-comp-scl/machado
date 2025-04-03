@@ -4,7 +4,7 @@
 # license. Please see the LICENSE.txt and README.md files that should
 # have been included as part of this package for licensing information.
 
-"""Views."""
+"""Read views."""
 
 from django.conf import settings
 from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
@@ -23,27 +23,8 @@ from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 
-from machado.api.serializers import JBrowseFeatureSerializer, OrganismSerializer, SequenceOntologySerializer
-from machado.api.serializers import JBrowseGlobalSerializer
-from machado.api.serializers import JBrowseNamesSerializer
-from machado.api.serializers import JBrowseRefseqSerializer
-from machado.api.serializers import autocompleteSerializer
-from machado.api.serializers import FeatureCoexpressionSerializer
-from machado.api.serializers import FeatureExpressionSerializer
-from machado.api.serializers import FeatureIDSerializer
-from machado.api.serializers import FeatureInfoSerializer
-from machado.api.serializers import FeatureLocationSerializer
-from machado.api.serializers import FeatureOntologySerializer
-from machado.api.serializers import FeatureOrthologSerializer
-from machado.api.serializers import FeatureProteinMatchesSerializer
-from machado.api.serializers import FeaturePublicationSerializer
-from machado.api.serializers import FeatureSequenceSerializer
-from machado.api.serializers import FeatureSimilaritySerializer
-from machado.api.serializers import RelationsOntologySerializer
-from machado.api.serializers import OrganismIDSerializer
-from machado.loaders.common import retrieve_organism, retrieve_feature_id, insert_organism
-from machado.loaders.exceptions import ImportingError
-from machado.loaders.ontology import OntologyLoader
+from machado.api.serializers import read as readSerializers
+from machado.loaders.common import retrieve_organism, retrieve_feature_id
 from machado.models import Analysis, Analysisfeature, Cvterm, Organism, Pub
 from machado.models import Feature, Featureloc, Featureprop, FeatureRelationship
 
@@ -74,7 +55,7 @@ class StandardResultSetPagination(PageNumberPagination):
 class JBrowseGlobalViewSet(viewsets.GenericViewSet):
     """API endpoint to view JBrowse global settings."""
 
-    serializer_class = JBrowseGlobalSerializer
+    serializer_class = readSerializers.JBrowseGlobalSerializer
 
     @swagger_auto_schema(
         operation_summary="Retrieve global settings",
@@ -84,7 +65,7 @@ class JBrowseGlobalViewSet(viewsets.GenericViewSet):
     def list(self, request):
         """List."""
         queryset = self.get_queryset()
-        serializer = JBrowseGlobalSerializer(queryset, many=True)
+        serializer = readSerializers.JBrowseGlobalSerializer(queryset, many=True)
         return Response(serializer.data)
 
     def get_queryset(self):
@@ -100,7 +81,7 @@ class JBrowseGlobalViewSet(viewsets.GenericViewSet):
 class JBrowseNamesViewSet(viewsets.GenericViewSet):
     """API endpoint to JBrowse names."""
 
-    serializer_class = JBrowseNamesSerializer
+    serializer_class = readSerializers.JBrowseNamesSerializer
 
     organism_param = openapi.Parameter(
         "organism",
@@ -133,7 +114,7 @@ class JBrowseNamesViewSet(viewsets.GenericViewSet):
     def list(self, request):
         """List."""
         queryset = self.get_queryset()
-        serializer = JBrowseNamesSerializer(queryset, many=True)
+        serializer = readSerializers.JBrowseNamesSerializer(queryset, many=True)
         return Response(serializer.data)
 
     def get_queryset(self):
@@ -167,7 +148,7 @@ class JBrowseNamesViewSet(viewsets.GenericViewSet):
 class JBrowseRefSeqsViewSet(viewsets.GenericViewSet):
     """API endpoint to JBrowse refSeqs.json."""
 
-    serializer_class = JBrowseRefseqSerializer
+    serializer_class = readSerializers.JBrowseRefseqSerializer
 
     organism_param = openapi.Parameter(
         "organism",
@@ -193,7 +174,7 @@ class JBrowseRefSeqsViewSet(viewsets.GenericViewSet):
     def list(self, *args, **kwargs):
         """List."""
         queryset = self.get_queryset()
-        serializer = JBrowseRefseqSerializer(queryset, many=True)
+        serializer = readSerializers.JBrowseRefseqSerializer(queryset, many=True)
         return Response(serializer.data)
 
     def get_queryset(self):
@@ -220,7 +201,7 @@ class JBrowseRefSeqsViewSet(viewsets.GenericViewSet):
 class JBrowseFeatureViewSet(viewsets.GenericViewSet):
     """API endpoint to view gene."""
 
-    serializer_class = JBrowseFeatureSerializer
+    serializer_class = readSerializers.JBrowseFeatureSerializer
 
     organism_param = openapi.Parameter(
         "organism",
@@ -261,7 +242,9 @@ class JBrowseFeatureViewSet(viewsets.GenericViewSet):
         """List."""
         queryset = self.get_queryset()
         context = self.get_serializer_context()
-        serializer = JBrowseFeatureSerializer(queryset, context=context, many=True)
+        serializer = readSerializers.JBrowseFeatureSerializer(
+            queryset, context=context, many=True
+        )
         return Response({"features": serializer.data})
 
     def get_serializer_context(self):
@@ -318,7 +301,7 @@ class JBrowseFeatureViewSet(viewsets.GenericViewSet):
 class autocompleteViewSet(viewsets.GenericViewSet):
     """API endpoint to provide autocomplete hits."""
 
-    serializer_class = autocompleteSerializer
+    serializer_class = readSerializers.autocompleteSerializer
 
     q_param = openapi.Parameter(
         "q",
@@ -344,7 +327,7 @@ class autocompleteViewSet(viewsets.GenericViewSet):
     def list(self, request):
         """Search the ElasticSearch index for matching strings."""
         queryset = self.get_queryset()
-        serializer = autocompleteSerializer(queryset, many=True)
+        serializer = readSerializers.autocompleteSerializer(queryset, many=True)
         return Response(serializer.data)
 
     def get_queryset(self):
@@ -380,7 +363,7 @@ class OrganismIDViewSet(viewsets.GenericViewSet):
 
     lookup_field = "organism_id"
     lookup_value_regex = r"^\d+$"
-    serializer_class = OrganismIDSerializer
+    serializer_class = readSerializers.OrganismIDSerializer
 
     genus_param = openapi.Parameter(
         "genus",
@@ -444,7 +427,7 @@ class OrganismIDViewSet(viewsets.GenericViewSet):
     def list(self, request):
         """List."""
         queryset = self.get_queryset()
-        serializer = OrganismIDSerializer(queryset, many=False)
+        serializer = readSerializers.OrganismIDSerializer(queryset, many=False)
         return Response(serializer.data)
 
     def get_queryset(self):
@@ -486,12 +469,22 @@ class OrganismIDViewSet(viewsets.GenericViewSet):
         return super(OrganismIDViewSet, self).dispatch(*args, **kwargs)
 
 
+class OrganismListViewSet(viewsets.ViewSet):
+    """Retrieve all the organisms."""
+
+    def list(self, request):
+        """List."""
+        queryset = Organism.objects.exclude(genus="multispecies")
+        serializer = readSerializers.OrganismListSerializer(queryset, many=True)
+        return Response(serializer.data)
+
+
 class FeatureIDViewSet(viewsets.GenericViewSet):
     """Retrieve the feature ID by accession."""
 
     lookup_field = "feature_id"
     lookup_value_regex = r"^\d+$"
-    serializer_class = FeatureIDSerializer
+    serializer_class = readSerializers.FeatureIDSerializer
 
     accession_param = openapi.Parameter(
         "accession",
@@ -533,7 +526,7 @@ class FeatureIDViewSet(viewsets.GenericViewSet):
     def list(self, request):
         """List."""
         queryset = self.get_queryset()
-        serializer = FeatureIDSerializer(queryset, many=False)
+        serializer = readSerializers.FeatureIDSerializer(queryset, many=False)
         return Response(serializer.data)
 
     def get_queryset(self):
@@ -559,7 +552,7 @@ class FeatureOrthologViewSet(viewsets.GenericViewSet):
 
     lookup_field = "feature_id"
     lookup_value_regex = r"^\d+$"
-    serializer_class = FeatureOrthologSerializer
+    serializer_class = readSerializers.FeatureOrthologSerializer
 
     operation_summary = "Retrieve ortholog group by feature ID"
     operation_description = operation_summary + "<br /><br />"
@@ -575,7 +568,7 @@ class FeatureOrthologViewSet(viewsets.GenericViewSet):
     def list(self, *args, **kwargs):
         """List."""
         queryset = self.get_queryset()
-        serializer = FeatureOrthologSerializer(queryset, many=True)
+        serializer = readSerializers.FeatureOrthologSerializer(queryset, many=True)
         try:
             feature_obj = Feature.objects.get(feature_id=self.kwargs.get("feature_id"))
             return Response(
@@ -613,7 +606,7 @@ class FeatureCoexpressionViewSet(viewsets.GenericViewSet):
 
     lookup_field = "feature_id"
     lookup_value_regex = r"^\d+$"
-    serializer_class = FeatureOrthologSerializer
+    serializer_class = readSerializers.FeatureOrthologSerializer
 
     operation_summary = "Retrieve co-expression group by feature ID"
     operation_description = operation_summary + "<br /><br />"
@@ -629,7 +622,7 @@ class FeatureCoexpressionViewSet(viewsets.GenericViewSet):
     def list(self, *args, **kwargs):
         """List."""
         queryset = self.get_queryset()
-        serializer = FeatureCoexpressionSerializer(queryset, many=True)
+        serializer = readSerializers.FeatureCoexpressionSerializer(queryset, many=True)
         try:
             feature_obj = Feature.objects.get(feature_id=self.kwargs.get("feature_id"))
             return Response(
@@ -667,7 +660,7 @@ class FeatureExpressionViewSet(viewsets.GenericViewSet):
 
     lookup_field = "feature_id"
     lookup_value_regex = r"^\d+$"
-    serializer_class = FeatureExpressionSerializer
+    serializer_class = readSerializers.FeatureExpressionSerializer
 
     operation_summary = "Retrieve expression by feature ID"
     operation_description = operation_summary + "<br /><br />"
@@ -683,7 +676,7 @@ class FeatureExpressionViewSet(viewsets.GenericViewSet):
     def list(self, *args, **kwargs):
         """List."""
         queryset = self.get_queryset()
-        serializer = FeatureExpressionSerializer(queryset, many=True)
+        serializer = readSerializers.FeatureExpressionSerializer(queryset, many=True)
         return Response(serializer.data)
 
     def get_queryset(self):
@@ -706,7 +699,7 @@ class FeatureInfoViewSet(viewsets.GenericViewSet):
 
     lookup_field = "feature_id"
     lookup_value_regex = r"^\d+$"
-    serializer_class = FeatureInfoSerializer
+    serializer_class = readSerializers.FeatureInfoSerializer
 
     operation_summary = "Retrieve general information by feature ID"
     operation_description = operation_summary + "<br /><br />"
@@ -722,7 +715,7 @@ class FeatureInfoViewSet(viewsets.GenericViewSet):
     def list(self, *args, **kwargs):
         """List."""
         queryset = self.get_queryset()
-        serializer = FeatureInfoSerializer(queryset, many=False)
+        serializer = readSerializers.FeatureInfoSerializer(queryset, many=False)
         return Response(serializer.data)
 
     def get_queryset(self):
@@ -743,7 +736,7 @@ class FeatureLocationViewSet(viewsets.GenericViewSet):
 
     lookup_field = "feature_id"
     lookup_value_regex = r"^\d+$"
-    serializer_class = FeatureLocationSerializer
+    serializer_class = readSerializers.FeatureLocationSerializer
 
     operation_summary = "Retrieve location by feature ID"
     operation_description = operation_summary + "<br /><br />"
@@ -759,7 +752,7 @@ class FeatureLocationViewSet(viewsets.GenericViewSet):
     def list(self, *args, **kwargs):
         """List."""
         queryset = self.get_queryset()
-        serializer = FeatureLocationSerializer(queryset, many=True)
+        serializer = readSerializers.FeatureLocationSerializer(queryset, many=True)
         return Response(serializer.data)
 
     def get_queryset(self):
@@ -782,7 +775,7 @@ class FeatureSequenceViewSet(viewsets.GenericViewSet):
 
     lookup_field = "feature_id"
     lookup_value_regex = r"^\d+$"
-    serializer_class = FeatureSequenceSerializer
+    serializer_class = readSerializers.FeatureSequenceSerializer
 
     operation_summary = "Retrieve sequence by feature ID"
     operation_description = operation_summary + "<br /><br />"
@@ -798,7 +791,7 @@ class FeatureSequenceViewSet(viewsets.GenericViewSet):
     def list(self, *args, **kwargs):
         """List."""
         queryset = self.get_queryset()
-        serializer = FeatureSequenceSerializer(queryset, many=False)
+        serializer = readSerializers.FeatureSequenceSerializer(queryset, many=False)
         return Response(serializer.data)
 
     def get_queryset(self):
@@ -819,7 +812,7 @@ class FeaturePublicationViewSet(viewsets.GenericViewSet):
 
     lookup_field = "feature_id"
     lookup_value_regex = r"^\d+$"
-    serializer_class = FeaturePublicationSerializer
+    serializer_class = readSerializers.FeaturePublicationSerializer
 
     operation_summary = "Retrieve publication by feature ID"
     operation_description = operation_summary + "<br /><br />"
@@ -835,7 +828,7 @@ class FeaturePublicationViewSet(viewsets.GenericViewSet):
     def list(self, *args, **kwargs):
         """List."""
         queryset = self.get_queryset()
-        serializer = FeaturePublicationSerializer(queryset, many=True)
+        serializer = readSerializers.FeaturePublicationSerializer(queryset, many=True)
         return Response(serializer.data)
 
     def get_queryset(self):
@@ -858,7 +851,7 @@ class FeatureOntologyViewSet(viewsets.GenericViewSet):
 
     lookup_field = "feature_id"
     lookup_value_regex = r"^\d+$"
-    serializer_class = FeatureOntologySerializer
+    serializer_class = readSerializers.FeatureOntologySerializer
 
     operation_summary = "Retrieve ontology terms by feature ID"
     operation_description = operation_summary + "<br /><br />"
@@ -874,7 +867,7 @@ class FeatureOntologyViewSet(viewsets.GenericViewSet):
     def list(self, *args, **kwargs):
         """List."""
         queryset = self.get_queryset()
-        serializer = FeatureOntologySerializer(queryset, many=True)
+        serializer = readSerializers.FeatureOntologySerializer(queryset, many=True)
         return Response(serializer.data)
 
     def get_queryset(self):
@@ -897,7 +890,7 @@ class FeatureProteinMatchesViewSet(viewsets.GenericViewSet):
 
     lookup_field = "feature_id"
     lookup_value_regex = r"^\d+$"
-    serializer_class = FeatureProteinMatchesSerializer
+    serializer_class = readSerializers.FeatureProteinMatchesSerializer
 
     operation_summary = "Retrieve protein matches by feature ID"
     operation_description = operation_summary + "<br /><br />"
@@ -913,7 +906,9 @@ class FeatureProteinMatchesViewSet(viewsets.GenericViewSet):
     def list(self, *args, **kwargs):
         """List."""
         queryset = self.get_queryset()
-        serializer = FeatureProteinMatchesSerializer(queryset, many=True)
+        serializer = readSerializers.FeatureProteinMatchesSerializer(
+            queryset, many=True
+        )
         return Response(serializer.data)
 
     def get_queryset(self):
@@ -938,7 +933,7 @@ class FeatureSimilarityViewSet(viewsets.GenericViewSet):
 
     lookup_field = "feature_id"
     lookup_value_regex = r"^\d+$"
-    serializer_class = FeatureSimilaritySerializer
+    serializer_class = readSerializers.FeatureSimilaritySerializer
 
     operation_summary = "Retrieve similarity matches by feature ID"
     operation_description = operation_summary + "<br /><br />"
@@ -954,7 +949,7 @@ class FeatureSimilarityViewSet(viewsets.GenericViewSet):
     def list(self, *args, **kwargs):
         """List."""
         queryset = self.get_queryset()
-        serializer = FeatureSimilaritySerializer(queryset, many=True)
+        serializer = readSerializers.FeatureSimilaritySerializer(queryset, many=True)
         return Response(serializer.data)
 
     def get_queryset(self):

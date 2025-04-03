@@ -1,6 +1,7 @@
 __pycache__/
 *.py[cod]
 *-info
+*.swp
 build
 dist
 venv

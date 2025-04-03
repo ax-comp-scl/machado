@@ -4,6 +4,7 @@
 # license. Please see the LICENSE.txt and README.md files that should
 # have been included as part of this package for licensing information.
 from django.db import models
+from django.utils import timezone
 
 from machado.decorators import machado_feature_methods, machado_pub_methods
 from django.contrib.auth.models import User
@@ -33,6 +34,7 @@ class Acquisition(models.Model):
     uri = models.TextField(blank=True, null=True)
 
     class Meta:
+        managed = False
         db_table = "acquisition"
 
 
@@ -57,6 +59,7 @@ class AcquisitionRelationship(models.Model):
     rank = models.IntegerField()
 
     class Meta:
+        managed = False
         db_table = "acquisition_relationship"
         unique_together = (("subject", "object", "type", "rank"),)
 
@@ -77,6 +80,7 @@ class Acquisitionprop(models.Model):
     rank = models.IntegerField()
 
     class Meta:
+        managed = False
         db_table = "acquisitionprop"
         unique_together = (("acquisition", "type", "rank"),)
 
@@ -94,6 +98,7 @@ class Analysis(models.Model):
     timeexecuted = models.DateTimeField()
 
     class Meta:
+        managed = False
         db_table = "analysis"
         unique_together = (("program", "programversion", "sourcename"),)
 
@@ -114,6 +119,7 @@ class AnalysisCvterm(models.Model):
     rank = models.IntegerField()
 
     class Meta:
+        managed = False
         db_table = "analysis_cvterm"
         unique_together = (("analysis", "cvterm", "rank"),)
 
@@ -133,6 +139,7 @@ class AnalysisDbxref(models.Model):
     is_current = models.BooleanField()
 
     class Meta:
+        managed = False
         db_table = "analysis_dbxref"
         unique_together = (("analysis", "dbxref"),)
 
@@ -149,6 +156,7 @@ class AnalysisPub(models.Model):
     )
 
     class Meta:
+        managed = False
         db_table = "analysis_pub"
         unique_together = (("analysis", "pub"),)
 
@@ -174,6 +182,7 @@ class AnalysisRelationship(models.Model):
     rank = models.IntegerField()
 
     class Meta:
+        managed = False
         db_table = "analysis_relationship"
         unique_together = (("subject", "object", "type", "rank"),)
 
@@ -196,6 +205,7 @@ class Analysisfeature(models.Model):
     identity = models.FloatField(blank=True, null=True)
 
     class Meta:
+        managed = False
         db_table = "analysisfeature"
         unique_together = (("feature", "analysis"),)
 
@@ -216,6 +226,7 @@ class Analysisfeatureprop(models.Model):
     rank = models.IntegerField()
 
     class Meta:
+        managed = False
         db_table = "analysisfeatureprop"
         unique_together = (("analysisfeature", "type", "rank"),)
 
@@ -234,6 +245,7 @@ class Analysisprop(models.Model):
     rank = models.IntegerField()
 
     class Meta:
+        managed = False
         db_table = "analysisprop"
         unique_together = (("analysis", "type", "rank"),)
 
@@ -285,6 +297,7 @@ class Arraydesign(models.Model):
     num_sub_rows = models.IntegerField(blank=True, null=True)
 
     class Meta:
+        managed = False
         db_table = "arraydesign"
 
 
@@ -304,6 +317,7 @@ class Arraydesignprop(models.Model):
     rank = models.IntegerField()
 
     class Meta:
+        managed = False
         db_table = "arraydesignprop"
         unique_together = (("arraydesign", "type", "rank"),)
 
@@ -339,6 +353,7 @@ class Assay(models.Model):
     description = models.TextField(blank=True, null=True)
 
     class Meta:
+        managed = False
         db_table = "assay"
 
 
@@ -362,6 +377,7 @@ class AssayBiomaterial(models.Model):
     rank = models.IntegerField()
 
     class Meta:
+        managed = False
         db_table = "assay_biomaterial"
         unique_together = (("assay", "biomaterial", "channel", "rank"),)
 
@@ -378,6 +394,7 @@ class AssayProject(models.Model):
     )
 
     class Meta:
+        managed = False
         db_table = "assay_project"
         unique_together = (("assay", "project"),)
 
@@ -394,6 +411,7 @@ class Assayprop(models.Model):
     rank = models.IntegerField()
 
     class Meta:
+        managed = False
         db_table = "assayprop"
         unique_together = (("assay", "type", "rank"),)
 
@@ -425,6 +443,7 @@ class Biomaterial(models.Model):
     description = models.TextField(blank=True, null=True)
 
     class Meta:
+        managed = False
         db_table = "biomaterial"
 
 
@@ -442,6 +461,7 @@ class BiomaterialDbxref(models.Model):
     )
 
     class Meta:
+        managed = False
         db_table = "biomaterial_dbxref"
         unique_together = (("biomaterial", "dbxref"),)
 
@@ -465,6 +485,7 @@ class BiomaterialRelationship(models.Model):
     )
 
     class Meta:
+        managed = False
         db_table = "biomaterial_relationship"
         unique_together = (("subject", "object", "type"),)
 
@@ -492,6 +513,7 @@ class BiomaterialTreatment(models.Model):
     rank = models.IntegerField()
 
     class Meta:
+        managed = False
         db_table = "biomaterial_treatment"
         unique_together = (("biomaterial", "treatment"),)
 
@@ -512,6 +534,7 @@ class Biomaterialprop(models.Model):
     rank = models.IntegerField()
 
     class Meta:
+        managed = False
         db_table = "biomaterialprop"
         unique_together = (("biomaterial", "type", "rank"),)
 
@@ -529,6 +552,7 @@ class CellLine(models.Model):
     timelastmodified = models.DateTimeField()
 
     class Meta:
+        managed = False
         db_table = "cell_line"
         unique_together = (("uniquename", "organism"),)
 
@@ -551,6 +575,7 @@ class CellLineCvterm(models.Model):
     rank = models.IntegerField()
 
     class Meta:
+        managed = False
         db_table = "cell_line_cvterm"
         unique_together = (("cell_line", "cvterm", "pub", "rank"),)
 
@@ -571,6 +596,7 @@ class CellLineCvtermprop(models.Model):
     rank = models.IntegerField()
 
     class Meta:
+        managed = False
         db_table = "cell_line_cvtermprop"
         unique_together = (("cell_line_cvterm", "type", "rank"),)
 
@@ -590,6 +616,7 @@ class CellLineDbxref(models.Model):
     is_current = models.BooleanField()
 
     class Meta:
+        managed = False
         db_table = "cell_line_dbxref"
         unique_together = (("cell_line", "dbxref"),)
 
@@ -611,6 +638,7 @@ class CellLineFeature(models.Model):
     )
 
     class Meta:
+        managed = False
         db_table = "cell_line_feature"
         unique_together = (("cell_line", "feature", "pub"),)
 
@@ -632,6 +660,7 @@ class CellLineLibrary(models.Model):
     )
 
     class Meta:
+        managed = False
         db_table = "cell_line_library"
         unique_together = (("cell_line", "library", "pub"),)
 
@@ -648,6 +677,7 @@ class CellLinePub(models.Model):
     )
 
     class Meta:
+        managed = False
         db_table = "cell_line_pub"
         unique_together = (("cell_line", "pub"),)
 
@@ -671,6 +701,7 @@ class CellLineRelationship(models.Model):
     )
 
     class Meta:
+        managed = False
         db_table = "cell_line_relationship"
         unique_together = (("subject", "object", "type"),)
 
@@ -694,6 +725,7 @@ class CellLineSynonym(models.Model):
     is_internal = models.BooleanField()
 
     class Meta:
+        managed = False
         db_table = "cell_line_synonym"
         unique_together = (("synonym", "cell_line", "pub"),)
 
@@ -712,6 +744,7 @@ class CellLineprop(models.Model):
     rank = models.IntegerField()
 
     class Meta:
+        managed = False
         db_table = "cell_lineprop"
         unique_together = (("cell_line", "type", "rank"),)
 
@@ -728,6 +761,7 @@ class CellLinepropPub(models.Model):
     )
 
     class Meta:
+        managed = False
         db_table = "cell_lineprop_pub"
         unique_together = (("cell_lineprop", "pub"),)
 
@@ -741,6 +775,7 @@ class Chadoprop(models.Model):
     rank = models.IntegerField()
 
     class Meta:
+        managed = False
         db_table = "chadoprop"
         unique_together = (("type", "rank"),)
 
@@ -751,6 +786,7 @@ class Channel(models.Model):
     definition = models.TextField()
 
     class Meta:
+        managed = False
         db_table = "channel"
 
 
@@ -767,6 +803,7 @@ class Contact(models.Model):
     description = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
+        managed = False
         db_table = "contact"
 
 
@@ -789,6 +826,7 @@ class ContactRelationship(models.Model):
     )
 
     class Meta:
+        managed = False
         db_table = "contact_relationship"
         unique_together = (("subject", "object", "type"),)
 
@@ -805,6 +843,7 @@ class Contactprop(models.Model):
     rank = models.IntegerField()
 
     class Meta:
+        managed = False
         db_table = "contactprop"
         unique_together = (("contact", "type", "rank"),)
 
@@ -828,6 +867,7 @@ class Control(models.Model):
     rank = models.IntegerField()
 
     class Meta:
+        managed = False
         db_table = "control"
 
 
@@ -837,6 +877,7 @@ class Cv(models.Model):
     definition = models.TextField(blank=True, null=True)
 
     class Meta:
+        managed = False
         db_table = "cv"
 
 
@@ -850,6 +891,7 @@ class Cvprop(models.Model):
     rank = models.IntegerField()
 
     class Meta:
+        managed = False
         db_table = "cvprop"
         unique_together = (("cv", "type", "rank"),)
 
@@ -866,6 +908,7 @@ class Cvterm(models.Model):
     is_relationshiptype = models.IntegerField()
 
     class Meta:
+        managed = False
         db_table = "cvterm"
         unique_together = (("name", "cv", "is_obsolete"),)
 
@@ -881,6 +924,7 @@ class CvtermDbxref(models.Model):
     is_for_definition = models.IntegerField()
 
     class Meta:
+        managed = False
         db_table = "cvterm_dbxref"
         unique_together = (("cvterm", "dbxref"),)
 
@@ -904,6 +948,7 @@ class CvtermRelationship(models.Model):
     )
 
     class Meta:
+        managed = False
         db_table = "cvterm_relationship"
         unique_together = (("subject", "object", "type"),)
 
@@ -929,6 +974,7 @@ class Cvtermpath(models.Model):
     pathdistance = models.IntegerField(blank=True, null=True)
 
     class Meta:
+        managed = False
         db_table = "cvtermpath"
         unique_together = (("subject", "object", "type", "pathdistance"),)
 
@@ -945,6 +991,7 @@ class Cvtermprop(models.Model):
     rank = models.IntegerField()
 
     class Meta:
+        managed = False
         db_table = "cvtermprop"
         unique_together = (("cvterm", "type", "value", "rank"),)
 
@@ -964,6 +1011,7 @@ class Cvtermsynonym(models.Model):
     )
 
     class Meta:
+        managed = False
         db_table = "cvtermsynonym"
         unique_together = (("cvterm", "synonym"),)
 
@@ -976,6 +1024,7 @@ class Db(models.Model):
     url = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
+        managed = False
         db_table = "db"
 
 
@@ -989,6 +1038,7 @@ class Dbprop(models.Model):
     rank = models.IntegerField()
 
     class Meta:
+        managed = False
         db_table = "dbprop"
         unique_together = (("db", "type", "rank"),)
 
@@ -1001,6 +1051,7 @@ class Dbxref(models.Model):
     description = models.TextField(blank=True, null=True)
 
     class Meta:
+        managed = False
         db_table = "dbxref"
         unique_together = (("db", "accession", "version"),)
 
@@ -1017,6 +1068,7 @@ class Dbxrefprop(models.Model):
     rank = models.IntegerField()
 
     class Meta:
+        managed = False
         db_table = "dbxrefprop"
         unique_together = (("dbxref", "type", "rank"),)
 
@@ -1028,6 +1080,7 @@ class Eimage(models.Model):
     image_uri = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
+        managed = False
         db_table = "eimage"
 
 
@@ -1061,6 +1114,7 @@ class Element(models.Model):
     )
 
     class Meta:
+        managed = False
         db_table = "element"
         unique_together = (("feature", "arraydesign"),)
 
@@ -1086,6 +1140,7 @@ class ElementRelationship(models.Model):
     rank = models.IntegerField()
 
     class Meta:
+        managed = False
         db_table = "element_relationship"
         unique_together = (("subject", "object", "type", "rank"),)
 
@@ -1105,6 +1160,7 @@ class Elementresult(models.Model):
     signal = models.FloatField()
 
     class Meta:
+        managed = False
         db_table = "elementresult"
         unique_together = (("element", "quantification"),)
 
@@ -1130,6 +1186,7 @@ class ElementresultRelationship(models.Model):
     rank = models.IntegerField()
 
     class Meta:
+        managed = False
         db_table = "elementresult_relationship"
         unique_together = (("subject", "object", "type", "rank"),)
 
@@ -1140,6 +1197,7 @@ class Environment(models.Model):
     description = models.TextField(blank=True, null=True)
 
     class Meta:
+        managed = False
         db_table = "environment"
 
 
@@ -1157,6 +1215,7 @@ class EnvironmentCvterm(models.Model):
     )
 
     class Meta:
+        managed = False
         db_table = "environment_cvterm"
         unique_together = (("environment", "cvterm"),)
 
@@ -1168,6 +1227,7 @@ class Expression(models.Model):
     description = models.TextField(blank=True, null=True)
 
     class Meta:
+        managed = False
         db_table = "expression"
 
 
@@ -1191,6 +1251,7 @@ class ExpressionCvterm(models.Model):
     )
 
     class Meta:
+        managed = False
         db_table = "expression_cvterm"
         unique_together = (("expression", "cvterm", "rank", "cvterm_type"),)
 
@@ -1211,6 +1272,7 @@ class ExpressionCvtermprop(models.Model):
     rank = models.IntegerField()
 
     class Meta:
+        managed = False
         db_table = "expression_cvtermprop"
         unique_together = (("expression_cvterm", "type", "rank"),)
 
@@ -1229,6 +1291,7 @@ class ExpressionImage(models.Model):
     )
 
     class Meta:
+        managed = False
         db_table = "expression_image"
         unique_together = (("expression", "eimage"),)
 
@@ -1245,6 +1308,7 @@ class ExpressionPub(models.Model):
     )
 
     class Meta:
+        managed = False
         db_table = "expression_pub"
         unique_together = (("expression", "pub"),)
 
@@ -1263,6 +1327,7 @@ class Expressionprop(models.Model):
     rank = models.IntegerField()
 
     class Meta:
+        managed = False
         db_table = "expressionprop"
         unique_together = (("expression", "type", "rank"),)
 
@@ -1296,6 +1361,7 @@ class Feature(models.Model):
     timelastmodified = models.DateTimeField()
 
     class Meta:
+        managed = False
         db_table = "feature"
         unique_together = (("organism", "uniquename", "type"),)
 
@@ -1314,6 +1380,7 @@ class FeatureContact(models.Model):
     )
 
     class Meta:
+        managed = False
         db_table = "feature_contact"
         unique_together = (("feature", "contact"),)
 
@@ -1335,6 +1402,7 @@ class FeatureCvterm(models.Model):
     rank = models.IntegerField()
 
     class Meta:
+        managed = False
         db_table = "feature_cvterm"
         unique_together = (("feature", "cvterm", "pub", "rank"),)
 
@@ -1353,6 +1421,7 @@ class FeatureCvtermDbxref(models.Model):
     )
 
     class Meta:
+        managed = False
         db_table = "feature_cvterm_dbxref"
         unique_together = (("feature_cvterm", "dbxref"),)
 
@@ -1369,6 +1438,7 @@ class FeatureCvtermPub(models.Model):
     )
 
     class Meta:
+        managed = False
         db_table = "feature_cvterm_pub"
         unique_together = (("feature_cvterm", "pub"),)
 
@@ -1389,6 +1459,7 @@ class FeatureCvtermprop(models.Model):
     rank = models.IntegerField()
 
     class Meta:
+        managed = False
         db_table = "feature_cvtermprop"
         unique_together = (("feature_cvterm", "type", "rank"),)
 
@@ -1406,6 +1477,7 @@ class FeatureDbxref(models.Model):
     is_current = models.BooleanField()
 
     class Meta:
+        managed = False
         db_table = "feature_dbxref"
         unique_together = (("feature", "dbxref"),)
 
@@ -1427,6 +1499,7 @@ class FeatureExpression(models.Model):
     )
 
     class Meta:
+        managed = False
         db_table = "feature_expression"
         unique_together = (("expression", "feature", "pub"),)
 
@@ -1447,6 +1520,7 @@ class FeatureExpressionprop(models.Model):
     rank = models.IntegerField()
 
     class Meta:
+        managed = False
         db_table = "feature_expressionprop"
         unique_together = (("feature_expression", "type", "rank"),)
 
@@ -1479,6 +1553,7 @@ class FeatureGenotype(models.Model):
     )
 
     class Meta:
+        managed = False
         db_table = "feature_genotype"
         unique_together = (
             ("feature", "genotype", "cvterm", "chromosome", "rank", "cgroup"),
@@ -1499,6 +1574,7 @@ class FeaturePhenotype(models.Model):
     )
 
     class Meta:
+        managed = False
         db_table = "feature_phenotype"
         unique_together = (("feature", "phenotype"),)
 
@@ -1513,6 +1589,7 @@ class FeaturePub(models.Model):
     )
 
     class Meta:
+        managed = False
         db_table = "feature_pub"
         unique_together = (("feature", "pub"),)
 
@@ -1531,6 +1608,7 @@ class FeaturePubprop(models.Model):
     rank = models.IntegerField()
 
     class Meta:
+        managed = False
         db_table = "feature_pubprop"
         unique_together = (("feature_pub", "type", "rank"),)
 
@@ -1557,6 +1635,7 @@ class FeatureRelationship(models.Model):
     rank = models.IntegerField()
 
     class Meta:
+        managed = False
         db_table = "feature_relationship"
         unique_together = (("subject", "object", "type", "rank"),)
 
@@ -1575,6 +1654,7 @@ class FeatureRelationshipPub(models.Model):
     )
 
     class Meta:
+        managed = False
         db_table = "feature_relationship_pub"
         unique_together = (("feature_relationship", "pub"),)
 
@@ -1595,6 +1675,7 @@ class FeatureRelationshipprop(models.Model):
     rank = models.IntegerField()
 
     class Meta:
+        managed = False
         db_table = "feature_relationshipprop"
         unique_together = (("feature_relationship", "type", "rank"),)
 
@@ -1613,6 +1694,7 @@ class FeatureRelationshippropPub(models.Model):
     )
 
     class Meta:
+        managed = False
         db_table = "feature_relationshipprop_pub"
         unique_together = (("feature_relationshipprop", "pub"),)
 
@@ -1636,6 +1718,7 @@ class FeatureSynonym(models.Model):
     is_internal = models.BooleanField()
 
     class Meta:
+        managed = False
         db_table = "feature_synonym"
         unique_together = (("synonym", "feature", "pub"),)
 
@@ -1663,6 +1746,7 @@ class Featureloc(models.Model):
     rank = models.IntegerField()
 
     class Meta:
+        managed = False
         db_table = "featureloc"
         unique_together = (("feature", "locgroup", "rank"),)
 
@@ -1679,6 +1763,7 @@ class FeaturelocPub(models.Model):
     )
 
     class Meta:
+        managed = False
         db_table = "featureloc_pub"
         unique_together = (("featureloc", "pub"),)
 
@@ -1696,6 +1781,7 @@ class Featuremap(models.Model):
     )
 
     class Meta:
+        managed = False
         db_table = "featuremap"
 
 
@@ -1713,6 +1799,7 @@ class FeaturemapContact(models.Model):
     )
 
     class Meta:
+        managed = False
         db_table = "featuremap_contact"
         unique_together = (("featuremap", "contact"),)
 
@@ -1732,6 +1819,7 @@ class FeaturemapDbxref(models.Model):
     is_current = models.BooleanField()
 
     class Meta:
+        managed = False
         db_table = "featuremap_dbxref"
 
 
@@ -1749,6 +1837,7 @@ class FeaturemapOrganism(models.Model):
     )
 
     class Meta:
+        managed = False
         db_table = "featuremap_organism"
         unique_together = (("featuremap", "organism"),)
 
@@ -1765,6 +1854,7 @@ class FeaturemapPub(models.Model):
     )
 
     class Meta:
+        managed = False
         db_table = "featuremap_pub"
 
 
@@ -1782,6 +1872,7 @@ class Featuremapprop(models.Model):
     rank = models.IntegerField()
 
     class Meta:
+        managed = False
         db_table = "featuremapprop"
         unique_together = (("featuremap", "type", "rank"),)
 
@@ -1804,6 +1895,7 @@ class Featurepos(models.Model):
     mappos = models.FloatField()
 
     class Meta:
+        managed = False
         db_table = "featurepos"
 
 
@@ -1821,6 +1913,7 @@ class Featureposprop(models.Model):
     rank = models.IntegerField()
 
     class Meta:
+        managed = False
         db_table = "featureposprop"
         unique_together = (("featurepos", "type", "rank"),)
 
@@ -1837,6 +1930,7 @@ class Featureprop(models.Model):
     rank = models.IntegerField()
 
     class Meta:
+        managed = False
         db_table = "featureprop"
         unique_together = (("feature", "type", "rank"),)
 
@@ -1853,6 +1947,7 @@ class FeaturepropPub(models.Model):
     )
 
     class Meta:
+        managed = False
         db_table = "featureprop_pub"
         unique_together = (("featureprop", "pub"),)
 
@@ -1896,6 +1991,7 @@ class Featurerange(models.Model):
     rangestr = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
+        managed = False
         db_table = "featurerange"
 
 
@@ -1909,6 +2005,7 @@ class Genotype(models.Model):
     )
 
     class Meta:
+        managed = False
         db_table = "genotype"
 
 
@@ -1926,6 +2023,7 @@ class Genotypeprop(models.Model):
     rank = models.IntegerField()
 
     class Meta:
+        managed = False
         db_table = "genotypeprop"
         unique_together = (("genotype", "type", "rank"),)
 
@@ -1947,6 +2045,7 @@ class Library(models.Model):
     timelastmodified = models.DateTimeField()
 
     class Meta:
+        managed = False
         db_table = "library"
         unique_together = (("organism", "uniquename", "type"),)
 
@@ -1965,6 +2064,7 @@ class LibraryContact(models.Model):
     )
 
     class Meta:
+        managed = False
         db_table = "library_contact"
         unique_together = (("library", "contact"),)
 
@@ -1984,6 +2084,7 @@ class LibraryCvterm(models.Model):
     )
 
     class Meta:
+        managed = False
         db_table = "library_cvterm"
         unique_together = (("library", "cvterm", "pub"),)
 
@@ -2001,6 +2102,7 @@ class LibraryDbxref(models.Model):
     is_current = models.BooleanField()
 
     class Meta:
+        managed = False
         db_table = "library_dbxref"
         unique_together = (("library", "dbxref"),)
 
@@ -2022,6 +2124,7 @@ class LibraryExpression(models.Model):
     )
 
     class Meta:
+        managed = False
         db_table = "library_expression"
         unique_together = (("library", "expression"),)
 
@@ -2042,6 +2145,7 @@ class LibraryExpressionprop(models.Model):
     rank = models.IntegerField()
 
     class Meta:
+        managed = False
         db_table = "library_expressionprop"
         unique_together = (("library_expression", "type", "rank"),)
 
@@ -2060,6 +2164,7 @@ class LibraryFeature(models.Model):
     )
 
     class Meta:
+        managed = False
         db_table = "library_feature"
         unique_together = (("library", "feature"),)
 
@@ -2080,6 +2185,7 @@ class LibraryFeatureprop(models.Model):
     rank = models.IntegerField()
 
     class Meta:
+        managed = False
         db_table = "library_featureprop"
         unique_together = (("library_feature", "type", "rank"),)
 
@@ -2094,6 +2200,7 @@ class LibraryPub(models.Model):
     )
 
     class Meta:
+        managed = False
         db_table = "library_pub"
         unique_together = (("library", "pub"),)
 
@@ -2117,6 +2224,7 @@ class LibraryRelationship(models.Model):
     )
 
     class Meta:
+        managed = False
         db_table = "library_relationship"
         unique_together = (("subject", "object", "type"),)
 
@@ -2135,6 +2243,7 @@ class LibraryRelationshipPub(models.Model):
     )
 
     class Meta:
+        managed = False
         db_table = "library_relationship_pub"
         unique_together = (("library_relationship", "pub"),)
 
@@ -2158,6 +2267,7 @@ class LibrarySynonym(models.Model):
     is_internal = models.BooleanField()
 
     class Meta:
+        managed = False
         db_table = "library_synonym"
         unique_together = (("synonym", "library", "pub"),)
 
@@ -2174,6 +2284,7 @@ class Libraryprop(models.Model):
     rank = models.IntegerField()
 
     class Meta:
+        managed = False
         db_table = "libraryprop"
         unique_together = (("library", "type", "rank"),)
 
@@ -2190,6 +2301,7 @@ class LibrarypropPub(models.Model):
     )
 
     class Meta:
+        managed = False
         db_table = "libraryprop_pub"
         unique_together = (("libraryprop", "pub"),)
 
@@ -2210,6 +2322,7 @@ class Magedocumentation(models.Model):
     mageidentifier = models.TextField()
 
     class Meta:
+        managed = False
         db_table = "magedocumentation"
 
 
@@ -2219,6 +2332,7 @@ class Mageml(models.Model):
     mage_ml = models.TextField()
 
     class Meta:
+        managed = False
         db_table = "mageml"
 
 
@@ -2234,6 +2348,7 @@ class NdExperiment(models.Model):
     )
 
     class Meta:
+        managed = False
         db_table = "nd_experiment"
 
 
@@ -2258,6 +2373,7 @@ class NdExperimentAnalysis(models.Model):
     )
 
     class Meta:
+        managed = False
         db_table = "nd_experiment_analysis"
 
 
@@ -2275,6 +2391,7 @@ class NdExperimentContact(models.Model):
     )
 
     class Meta:
+        managed = False
         db_table = "nd_experiment_contact"
 
 
@@ -2292,6 +2409,7 @@ class NdExperimentDbxref(models.Model):
     )
 
     class Meta:
+        managed = False
         db_table = "nd_experiment_dbxref"
 
 
@@ -2309,6 +2427,7 @@ class NdExperimentGenotype(models.Model):
     )
 
     class Meta:
+        managed = False
         db_table = "nd_experiment_genotype"
         unique_together = (("nd_experiment", "genotype"),)
 
@@ -2327,6 +2446,7 @@ class NdExperimentPhenotype(models.Model):
     )
 
     class Meta:
+        managed = False
         db_table = "nd_experiment_phenotype"
         unique_together = (("nd_experiment", "phenotype"),)
 
@@ -2345,6 +2465,7 @@ class NdExperimentProject(models.Model):
     )
 
     class Meta:
+        managed = False
         db_table = "nd_experiment_project"
         unique_together = (("project", "nd_experiment"),)
 
@@ -2363,6 +2484,7 @@ class NdExperimentProtocol(models.Model):
     )
 
     class Meta:
+        managed = False
         db_table = "nd_experiment_protocol"
 
 
@@ -2378,6 +2500,7 @@ class NdExperimentPub(models.Model):
     )
 
     class Meta:
+        managed = False
         db_table = "nd_experiment_pub"
         unique_together = (("nd_experiment", "pub"),)
 
@@ -2401,6 +2524,7 @@ class NdExperimentStock(models.Model):
     )
 
     class Meta:
+        managed = False
         db_table = "nd_experiment_stock"
 
 
@@ -2418,6 +2542,7 @@ class NdExperimentStockDbxref(models.Model):
     )
 
     class Meta:
+        managed = False
         db_table = "nd_experiment_stock_dbxref"
 
 
@@ -2437,6 +2562,7 @@ class NdExperimentStockprop(models.Model):
     rank = models.IntegerField()
 
     class Meta:
+        managed = False
         db_table = "nd_experiment_stockprop"
         unique_together = (("nd_experiment_stock", "type", "rank"),)
 
@@ -2455,6 +2581,7 @@ class NdExperimentprop(models.Model):
     rank = models.IntegerField()
 
     class Meta:
+        managed = False
         db_table = "nd_experimentprop"
         unique_together = (("nd_experiment", "type", "rank"),)
 
@@ -2468,6 +2595,7 @@ class NdGeolocation(models.Model):
     altitude = models.FloatField(blank=True, null=True)
 
     class Meta:
+        managed = False
         db_table = "nd_geolocation"
 
 
@@ -2487,6 +2615,7 @@ class NdGeolocationprop(models.Model):
     rank = models.IntegerField()
 
     class Meta:
+        managed = False
         db_table = "nd_geolocationprop"
         unique_together = (("nd_geolocation", "type", "rank"),)
 
@@ -2499,6 +2628,7 @@ class NdProtocol(models.Model):
     )
 
     class Meta:
+        managed = False
         db_table = "nd_protocol"
 
 
@@ -2521,6 +2651,7 @@ class NdProtocolReagent(models.Model):
     )
 
     class Meta:
+        managed = False
         db_table = "nd_protocol_reagent"
 
 
@@ -2538,6 +2669,7 @@ class NdProtocolprop(models.Model):
     rank = models.IntegerField()
 
     class Meta:
+        managed = False
         db_table = "nd_protocolprop"
         unique_together = (("nd_protocol", "type", "rank"),)
 
@@ -2557,6 +2689,7 @@ class NdReagent(models.Model):
     )
 
     class Meta:
+        managed = False
         db_table = "nd_reagent"
 
 
@@ -2579,6 +2712,7 @@ class NdReagentRelationship(models.Model):
     )
 
     class Meta:
+        managed = False
         db_table = "nd_reagent_relationship"
 
 
@@ -2596,6 +2730,7 @@ class NdReagentprop(models.Model):
     rank = models.IntegerField()
 
     class Meta:
+        managed = False
         db_table = "nd_reagentprop"
         unique_together = (("nd_reagent", "type", "rank"),)
 
@@ -2617,6 +2752,7 @@ class Organism(models.Model):
     comment = models.TextField(blank=True, null=True)
 
     class Meta:
+        managed = False
         db_table = "organism"
         unique_together = (("genus", "species", "type", "infraspecific_name"),)
 
@@ -2637,6 +2773,7 @@ class OrganismCvterm(models.Model):
     )
 
     class Meta:
+        managed = False
         db_table = "organism_cvterm"
         unique_together = (("organism", "cvterm", "pub"),)
 
@@ -2657,6 +2794,7 @@ class OrganismCvtermprop(models.Model):
     rank = models.IntegerField()
 
     class Meta:
+        managed = False
         db_table = "organism_cvtermprop"
         unique_together = (("organism_cvterm", "type", "rank"),)
 
@@ -2673,6 +2811,7 @@ class OrganismDbxref(models.Model):
     )
 
     class Meta:
+        managed = False
         db_table = "organism_dbxref"
         unique_together = (("organism", "dbxref"),)
 
@@ -2689,6 +2828,7 @@ class OrganismPub(models.Model):
     )
 
     class Meta:
+        managed = False
         db_table = "organism_pub"
         unique_together = (("organism", "pub"),)
 
@@ -2713,6 +2853,7 @@ class OrganismRelationship(models.Model):
     rank = models.IntegerField()
 
     class Meta:
+        managed = False
         db_table = "organism_relationship"
         unique_together = (("subject", "object", "type", "rank"),)
 
@@ -2731,6 +2872,7 @@ class Organismprop(models.Model):
     rank = models.IntegerField()
 
     class Meta:
+        managed = False
         db_table = "organismprop"
         unique_together = (("organism", "type", "rank"),)
 
@@ -2749,6 +2891,7 @@ class OrganismpropPub(models.Model):
     rank = models.IntegerField()
 
     class Meta:
+        managed = False
         db_table = "organismprop_pub"
         unique_together = (("organismprop", "pub"),)
 
@@ -2772,6 +2915,7 @@ class Phendesc(models.Model):
     )
 
     class Meta:
+        managed = False
         db_table = "phendesc"
         unique_together = (("genotype", "environment", "type", "pub"),)
 
@@ -2811,6 +2955,7 @@ class Phenotype(models.Model):
     )
 
     class Meta:
+        managed = False
         db_table = "phenotype"
 
 
@@ -2858,6 +3003,7 @@ class PhenotypeComparison(models.Model):
     )
 
     class Meta:
+        managed = False
         db_table = "phenotype_comparison"
         unique_together = (
             (
@@ -2891,6 +3037,7 @@ class PhenotypeComparisonCvterm(models.Model):
     rank = models.IntegerField()
 
     class Meta:
+        managed = False
         db_table = "phenotype_comparison_cvterm"
         unique_together = (("phenotype_comparison", "cvterm"),)
 
@@ -2910,6 +3057,7 @@ class PhenotypeCvterm(models.Model):
     rank = models.IntegerField()
 
     class Meta:
+        managed = False
         db_table = "phenotype_cvterm"
         unique_together = (("phenotype", "cvterm", "rank"),)
 
@@ -2928,6 +3076,7 @@ class Phenotypeprop(models.Model):
     rank = models.IntegerField()
 
     class Meta:
+        managed = False
         db_table = "phenotypeprop"
         unique_together = (("phenotype", "type", "rank"),)
 
@@ -2957,6 +3106,7 @@ class Phenstatement(models.Model):
     )
 
     class Meta:
+        managed = False
         db_table = "phenstatement"
         unique_together = (("genotype", "phenotype", "environment", "type", "pub"),)
 
@@ -2995,6 +3145,7 @@ class Phylonode(models.Model):
     distance = models.FloatField(blank=True, null=True)
 
     class Meta:
+        managed = False
         db_table = "phylonode"
         unique_together = (("phylotree", "left_idx"), ("phylotree", "right_idx"))
 
@@ -3013,6 +3164,7 @@ class PhylonodeDbxref(models.Model):
     )
 
     class Meta:
+        managed = False
         db_table = "phylonode_dbxref"
         unique_together = (("phylonode", "dbxref"),)
 
@@ -3031,6 +3183,7 @@ class PhylonodeOrganism(models.Model):
     )
 
     class Meta:
+        managed = False
         db_table = "phylonode_organism"
 
 
@@ -3046,6 +3199,7 @@ class PhylonodePub(models.Model):
     )
 
     class Meta:
+        managed = False
         db_table = "phylonode_pub"
         unique_together = (("phylonode", "pub"),)
 
@@ -3075,6 +3229,7 @@ class PhylonodeRelationship(models.Model):
     )
 
     class Meta:
+        managed = False
         db_table = "phylonode_relationship"
         unique_together = (("subject", "object", "type"),)
 
@@ -3093,6 +3248,7 @@ class Phylonodeprop(models.Model):
     rank = models.IntegerField()
 
     class Meta:
+        managed = False
         db_table = "phylonodeprop"
         unique_together = (("phylonode", "type", "value", "rank"),)
 
@@ -3120,6 +3276,7 @@ class Phylotree(models.Model):
     comment = models.TextField(blank=True, null=True)
 
     class Meta:
+        managed = False
         db_table = "phylotree"
 
 
@@ -3135,6 +3292,7 @@ class PhylotreePub(models.Model):
     )
 
     class Meta:
+        managed = False
         db_table = "phylotree_pub"
         unique_together = (("phylotree", "pub"),)
 
@@ -3153,6 +3311,7 @@ class Phylotreeprop(models.Model):
     rank = models.IntegerField()
 
     class Meta:
+        managed = False
         db_table = "phylotreeprop"
         unique_together = (("phylotree", "type", "rank"),)
 
@@ -3163,6 +3322,7 @@ class Project(models.Model):
     description = models.TextField(blank=True, null=True)
 
     class Meta:
+        managed = False
         db_table = "project"
 
 
@@ -3181,6 +3341,7 @@ class ProjectAnalysis(models.Model):
     rank = models.IntegerField()
 
     class Meta:
+        managed = False
         db_table = "project_analysis"
         unique_together = (("project", "analysis"),)
 
@@ -3199,6 +3360,7 @@ class ProjectContact(models.Model):
     )
 
     class Meta:
+        managed = False
         db_table = "project_contact"
         unique_together = (("project", "contact"),)
 
@@ -3216,6 +3378,7 @@ class ProjectDbxref(models.Model):
     is_current = models.BooleanField()
 
     class Meta:
+        managed = False
         db_table = "project_dbxref"
         unique_together = (("project", "dbxref"),)
 
@@ -3234,6 +3397,7 @@ class ProjectFeature(models.Model):
     )
 
     class Meta:
+        managed = False
         db_table = "project_feature"
         unique_together = (("feature", "project"),)
 
@@ -3248,6 +3412,7 @@ class ProjectPub(models.Model):
     )
 
     class Meta:
+        managed = False
         db_table = "project_pub"
         unique_together = (("project", "pub"),)
 
@@ -3271,6 +3436,7 @@ class ProjectRelationship(models.Model):
     )
 
     class Meta:
+        managed = False
         db_table = "project_relationship"
         unique_together = (("subject_project", "object_project", "type"),)
 
@@ -3287,6 +3453,7 @@ class ProjectStock(models.Model):
     )
 
     class Meta:
+        managed = False
         db_table = "project_stock"
         unique_together = (("stock", "project"),)
 
@@ -3303,6 +3470,7 @@ class Projectprop(models.Model):
     rank = models.IntegerField()
 
     class Meta:
+        managed = False
         db_table = "projectprop"
         unique_together = (("project", "type", "rank"),)
 
@@ -3333,6 +3501,7 @@ class Protocol(models.Model):
     softwaredescription = models.TextField(blank=True, null=True)
 
     class Meta:
+        managed = False
         db_table = "protocol"
 
 
@@ -3362,6 +3531,7 @@ class Protocolparam(models.Model):
     rank = models.IntegerField()
 
     class Meta:
+        managed = False
         db_table = "protocolparam"
 
 
@@ -3385,6 +3555,7 @@ class Pub(models.Model):
     pubplace = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
+        managed = False
         db_table = "pub"
 
 
@@ -3399,6 +3570,7 @@ class PubDbxref(models.Model):
     is_current = models.BooleanField()
 
     class Meta:
+        managed = False
         db_table = "pub_dbxref"
         unique_together = (("pub", "dbxref"),)
 
@@ -3416,6 +3588,7 @@ class PubRelationship(models.Model):
     )
 
     class Meta:
+        managed = False
         db_table = "pub_relationship"
         unique_together = (("subject", "object", "type"),)
 
@@ -3432,6 +3605,7 @@ class Pubauthor(models.Model):
     suffix = models.CharField(max_length=100, blank=True, null=True)
 
     class Meta:
+        managed = False
         db_table = "pubauthor"
         unique_together = (("pub", "rank"),)
 
@@ -3450,6 +3624,7 @@ class PubauthorContact(models.Model):
     )
 
     class Meta:
+        managed = False
         db_table = "pubauthor_contact"
         unique_together = (("contact", "pubauthor"),)
 
@@ -3466,6 +3641,7 @@ class Pubprop(models.Model):
     rank = models.IntegerField(blank=True, null=True)
 
     class Meta:
+        managed = False
         db_table = "pubprop"
         unique_together = (("pub", "type", "rank"),)
 
@@ -3501,6 +3677,7 @@ class Quantification(models.Model):
     uri = models.TextField(blank=True, null=True)
 
     class Meta:
+        managed = False
         db_table = "quantification"
         unique_together = (("name", "analysis"),)
 
@@ -3524,6 +3701,7 @@ class QuantificationRelationship(models.Model):
     )
 
     class Meta:
+        managed = False
         db_table = "quantification_relationship"
         unique_together = (("subject", "object", "type"),)
 
@@ -3544,6 +3722,7 @@ class Quantificationprop(models.Model):
     rank = models.IntegerField()
 
     class Meta:
+        managed = False
         db_table = "quantificationprop"
         unique_together = (("quantification", "type", "rank"),)
 
@@ -3573,6 +3752,7 @@ class Stock(models.Model):
     is_obsolete = models.BooleanField()
 
     class Meta:
+        managed = False
         db_table = "stock"
         unique_together = (("organism", "uniquename", "type"),)
 
@@ -3592,6 +3772,7 @@ class StockCvterm(models.Model):
     rank = models.IntegerField()
 
     class Meta:
+        managed = False
         db_table = "stock_cvterm"
         unique_together = (("stock", "cvterm", "pub", "rank"),)
 
@@ -3610,6 +3791,7 @@ class StockCvtermprop(models.Model):
     rank = models.IntegerField()
 
     class Meta:
+        managed = False
         db_table = "stock_cvtermprop"
         unique_together = (("stock_cvterm", "type", "rank"),)
 
@@ -3625,6 +3807,7 @@ class StockDbxref(models.Model):
     is_current = models.BooleanField()
 
     class Meta:
+        managed = False
         db_table = "stock_dbxref"
         unique_together = (("stock", "dbxref"),)
 
@@ -3643,6 +3826,7 @@ class StockDbxrefprop(models.Model):
     rank = models.IntegerField()
 
     class Meta:
+        managed = False
         db_table = "stock_dbxrefprop"
         unique_together = (("stock_dbxref", "type", "rank"),)
 
@@ -3663,6 +3847,7 @@ class StockFeature(models.Model):
     rank = models.IntegerField()
 
     class Meta:
+        managed = False
         db_table = "stock_feature"
         unique_together = (("feature", "stock", "type", "rank"),)
 
@@ -3686,6 +3871,7 @@ class StockFeaturemap(models.Model):
     )
 
     class Meta:
+        managed = False
         db_table = "stock_featuremap"
         unique_together = (("featuremap", "stock", "type"),)
 
@@ -3702,6 +3888,7 @@ class StockGenotype(models.Model):
     )
 
     class Meta:
+        managed = False
         db_table = "stock_genotype"
         unique_together = (("stock", "genotype"),)
 
@@ -3718,6 +3905,7 @@ class StockLibrary(models.Model):
     )
 
     class Meta:
+        managed = False
         db_table = "stock_library"
         unique_together = (("library", "stock"),)
 
@@ -3732,6 +3920,7 @@ class StockPub(models.Model):
     )
 
     class Meta:
+        managed = False
         db_table = "stock_pub"
         unique_together = (("stock", "pub"),)
 
@@ -3757,6 +3946,7 @@ class StockRelationship(models.Model):
     rank = models.IntegerField()
 
     class Meta:
+        managed = False
         db_table = "stock_relationship"
         unique_together = (("subject", "object", "type", "rank"),)
 
@@ -3782,6 +3972,7 @@ class StockRelationshipCvterm(models.Model):
     )
 
     class Meta:
+        managed = False
         db_table = "stock_relationship_cvterm"
 
 
@@ -3797,6 +3988,7 @@ class StockRelationshipPub(models.Model):
     )
 
     class Meta:
+        managed = False
         db_table = "stock_relationship_pub"
         unique_together = (("stock_relationship", "pub"),)
 
@@ -3817,6 +4009,7 @@ class Stockcollection(models.Model):
     uniquename = models.TextField()
 
     class Meta:
+        managed = False
         db_table = "stockcollection"
         unique_together = (("uniquename", "type"),)
 
@@ -3833,6 +4026,7 @@ class StockcollectionDb(models.Model):
     )
 
     class Meta:
+        managed = False
         db_table = "stockcollection_db"
         unique_together = (("stockcollection", "db"),)
 
@@ -3851,6 +4045,7 @@ class StockcollectionStock(models.Model):
     )
 
     class Meta:
+        managed = False
         db_table = "stockcollection_stock"
         unique_together = (("stockcollection", "stock"),)
 
@@ -3871,6 +4066,7 @@ class Stockcollectionprop(models.Model):
     rank = models.IntegerField()
 
     class Meta:
+        managed = False
         db_table = "stockcollectionprop"
         unique_together = (("stockcollection", "type", "rank"),)
 
@@ -3887,6 +4083,7 @@ class Stockprop(models.Model):
     rank = models.IntegerField()
 
     class Meta:
+        managed = False
         db_table = "stockprop"
         unique_together = (("stock", "type", "rank"),)
 
@@ -3903,6 +4100,7 @@ class StockpropPub(models.Model):
     )
 
     class Meta:
+        managed = False
         db_table = "stockprop_pub"
         unique_together = (("stockprop", "pub"),)
 
@@ -3930,6 +4128,7 @@ class Study(models.Model):
     description = models.TextField(blank=True, null=True)
 
     class Meta:
+        managed = False
         db_table = "study"
 
 
@@ -3943,6 +4142,7 @@ class StudyAssay(models.Model):
     )
 
     class Meta:
+        managed = False
         db_table = "study_assay"
         unique_together = (("study", "assay"),)
 
@@ -3955,6 +4155,7 @@ class Studydesign(models.Model):
     description = models.TextField(blank=True, null=True)
 
     class Meta:
+        managed = False
         db_table = "studydesign"
 
 
@@ -3972,6 +4173,7 @@ class Studydesignprop(models.Model):
     rank = models.IntegerField()
 
     class Meta:
+        managed = False
         db_table = "studydesignprop"
         unique_together = (("studydesign", "type", "rank"),)
 
@@ -3994,6 +4196,7 @@ class Studyfactor(models.Model):
     description = models.TextField(blank=True, null=True)
 
     class Meta:
+        managed = False
         db_table = "studyfactor"
 
 
@@ -4012,6 +4215,7 @@ class Studyfactorvalue(models.Model):
     rank = models.IntegerField()
 
     class Meta:
+        managed = False
         db_table = "studyfactorvalue"
 
 
@@ -4027,6 +4231,7 @@ class Studyprop(models.Model):
     rank = models.IntegerField()
 
     class Meta:
+        managed = False
         db_table = "studyprop"
         unique_together = (("study", "type", "rank"),)
 
@@ -4052,6 +4257,7 @@ class StudypropFeature(models.Model):
     )
 
     class Meta:
+        managed = False
         db_table = "studyprop_feature"
         unique_together = (("studyprop", "feature"),)
 
@@ -4065,6 +4271,7 @@ class Synonym(models.Model):
     synonym_sgml = models.CharField(max_length=255)
 
     class Meta:
+        managed = False
         db_table = "synonym"
         unique_together = (("name", "type"),)
 
@@ -4080,6 +4287,7 @@ class Tableinfo(models.Model):
     modification_date = models.DateField()
 
     class Meta:
+        managed = False
         db_table = "tableinfo"
 
 
@@ -4104,27 +4312,39 @@ class Treatment(models.Model):
     name = models.TextField(blank=True, null=True)
 
     class Meta:
+        managed = False
         db_table = "treatment"
 
+
 class History(models.Model):
-
-    class StatusChoices(models.TextChoices):
-        FAILED = 'F', 'Falhou'
-        IN_PROGRESS = 'I', 'Em progresso'
-        COMPLETED = 'C', 'Concluído'
-
-    user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
-    description = models.CharField(max_length=255)
-    method = models.CharField(max_length=50)
+    history_id = models.AutoField(primary_key=True)
+    command = models.CharField(max_length=255)
+    params = models.TextField(blank=True, null=True)
+    description = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    status = models.CharField(
-        max_length=1,
-        choices=StatusChoices.choices,
-        default=StatusChoices.FAILED
-    )
+    finished_at = models.DateTimeField(blank=True, null=True)
+    exit_code = models.IntegerField(null=True, blank=True)  # 0 = success, 1 = error
 
-    def __str__(self):
-        return self.action
-    
     class Meta:
-        db_table = 'history'
+        db_table = "history"
+
+    def start(self, command: str, params: str) -> None:
+        """Create new entry."""
+        self.command = command
+        self.params = params
+        self.created_at = timezone.now()
+        self.save()
+
+    def success(self, description: str = None) -> None:
+        """Update entry to log the finish."""
+        self.description = description
+        self.exit_code = 0
+        self.finished_at = timezone.now()
+        self.save()
+
+    def failure(self, description: str = None) -> None:
+        """Update entry to log the finish."""
+        self.description = description
+        self.exit_code = 1
+        self.finished_at = timezone.now()
+        self.save()
