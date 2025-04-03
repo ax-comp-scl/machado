@@ -17,6 +17,9 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        migrations.RunSQL(
+            "DROP TABLE IF EXISTS history"
+        ),
         migrations.CreateModel(
             name="History",
             fields=[
