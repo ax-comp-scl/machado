@@ -1018,7 +1018,7 @@ class OrganismViewSet(viewsets.GenericViewSet):
     @swagger_auto_schema(
         operation_summary="Insert a new organism",
         operation_description="Endpoint to insert a new organism into the system.",
-        request_body=InsertOrganismSerializer,
+        request_body=OrganismSerializer,
 
         responses={
             201: openapi.Response(
