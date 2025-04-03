@@ -11,7 +11,7 @@ from django.db import migrations
 class Migration(migrations.Migration):
     """Migration."""
 
-    dependencies = [("machado", "0001_initial"), ("machado", "0002_add_index")]
+    dependencies = [("machado", "0002_add_index"), ("machado", "0003_add_multispecies")]
 
     operations = [
         migrations.RunSQL(
