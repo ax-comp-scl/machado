@@ -4107,10 +4107,21 @@ class Treatment(models.Model):
         db_table = "treatment"
 
 class History(models.Model):
+
+    class StatusChoices(models.TextChoices):
+        FAILED = 'F', 'Falhou'
+        IN_PROGRESS = 'I', 'Em progresso'
+        COMPLETED = 'C', 'Concluído'
+
     user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
     description = models.CharField(max_length=255)
     method = models.CharField(max_length=50)
     created_at = models.DateTimeField(auto_now_add=True)
+    status = models.CharField(
+        max_length=1,
+        choices=StatusChoices.choices,
+        default=StatusChoices.FAILED
+    )
 
     def __str__(self):
         return self.action

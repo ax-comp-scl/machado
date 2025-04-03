@@ -1077,9 +1077,10 @@ class OrganismViewSet(viewsets.GenericViewSet):
                 infraspecific_name=infraspecific_name,
                 comment=comment,
             )
-            createAndSaveHistory(user, "POST", "Insert an organism")
+            createAndSaveHistory(user, "POST", "Insert an organism", 'C')
             return Response({"message": "Organism inserted successfully"}, status=status.HTTP_201_CREATED)
         except ImportingError as e:
+            createAndSaveHistory(user, "POST", "Insert an organism", 'F')
             return Response({"error": str(e)}, status=status.HTTP_409_CONFLICT)
 
 
@@ -1101,6 +1102,7 @@ class RelationsOntologyViewSet(viewsets.GenericViewSet):
                 G = obonet.read_obo(temp_file.name)
 
         except Exception as e:
+            createAndSaveHistory(user)
             return Response({'error': f'Error loading ontology file: {str(e)}'}, status=status.HTTP_400_BAD_REQUEST)
 
         cv_name = "relationship"

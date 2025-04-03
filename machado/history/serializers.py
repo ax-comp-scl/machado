@@ -7,4 +7,4 @@ class HistorySerializer(serializers.ModelSerializer):
     
     class Meta:
         model = History
-        fields = ['id', 'user', 'description', 'method', 'created_at']
+        fields = ['id', 'user', 'description', 'method', 'status', 'created_at']
