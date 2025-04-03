@@ -39,7 +39,6 @@ from machado.api.serializers import FeatureProteinMatchesSerializer
 from machado.api.serializers import FeaturePublicationSerializer
 from machado.api.serializers import FeatureSequenceSerializer
 from machado.api.serializers import FeatureSimilaritySerializer
-from machado.api.serializers import InsertOrganismSerializer
 from machado.api.serializers import RelationsOntologySerializer
 from machado.api.serializers import OrganismIDSerializer
 from machado.loaders.common import retrieve_organism, retrieve_feature_id, insert_organism
