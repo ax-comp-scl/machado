@@ -126,6 +126,12 @@ router.register(
     basename="load_sequence_ontology",
 )
 
+router.register(
+    r"load/fasta",
+    loadViews.FastaViewSet,
+    basename="load_fasta",
+)
+
 # history
 
 router.register(r"history", readViews.HistoryListViewSet, basename="loads_history")
