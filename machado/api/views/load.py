@@ -20,7 +20,6 @@ from rest_framework.response import Response
 
 from threading import Thread
 
-
 class OrganismViewSet(viewsets.GenericViewSet):
     """ViewSet for loading organism."""
 
@@ -96,7 +95,6 @@ class OrganismViewSet(viewsets.GenericViewSet):
             },
             status=status.HTTP_200_OK,
         )
-
 
 class RelationsOntologyViewSet(viewsets.GenericViewSet):
     """ViewSet for loading relations ontology."""
@@ -217,7 +215,6 @@ class PublicationViewSet(viewsets.GenericViewSet):
             },
             status=status.HTTP_200_OK,
         )
-
 
 class SequenceOntologyViewSet(viewsets.GenericViewSet):
     """ViewSet for loading sequence ontology."""
