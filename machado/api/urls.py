@@ -37,6 +37,7 @@ router.register(
 router.register(r"autocomplete", readViews.autocompleteViewSet, basename="autocomplete")
 
 router.register(r"organism/id", readViews.OrganismIDViewSet, basename="organism_id")
+
 router.register(
     r"organism/list", readViews.OrganismListViewSet, basename="organism_list"
 )
@@ -98,12 +99,14 @@ router.register(
 router.register(
     r"load/organism", 
     loadViews.OrganismViewSet, 
-    basename="load_organism")
+    basename="load_organism",
+)
 
 router.register(
     r"load/relations_ontology",
     loadViews.RelationsOntologyViewSet,
-    basename="load_relations_ontology")
+    basename="load_relations_ontology",
+)
 
 router.register(
     r"load/gene_ontology",
@@ -112,16 +115,20 @@ router.register(
 )
 
 router.register(
-    r'publications/load', 
+    r"load/publication",
     loadViews.PublicationViewSet, 
-    basename='publication-load'
+    basename="load_publication",
 )
 
-router.register(r"history", readViews.HistoryListViewSet, basename="loads_history")
-
-router.register(r"load/sequence_ontology",
+router.register(
+    r"load/sequence_ontology",
     loadViews.SequenceOntologyViewSet,
-    basename="load_sequence_ontology")
+    basename="load_sequence_ontology",
+)
+
+# history
+
+router.register(r"history", readViews.HistoryListViewSet, basename="loads_history")
 
 baseurl = None
 if hasattr(settings, "MACHADO_URL"):
