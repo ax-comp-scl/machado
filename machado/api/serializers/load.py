@@ -17,7 +17,6 @@ class LoadPublicationSerializer(serializers.Serializer):
     file = serializers.FileField()
     cpu = serializers.IntegerField(required=False, min_value=1, default=1, help_text="Number of threads")
 
-
 class FastaSerializer(serializers.Serializer):
     file = serializers.FileField()
     organism = serializers.CharField(required=True, help_text="Species name (eg. Homo sapiens, Mus musculus)")
