@@ -112,9 +112,9 @@ router.register(
 )
 
 router.register(
-    r'publications/load', 
+    r'load/publication', 
     loadViews.PublicationViewSet, 
-    basename='publication-load'
+    basename='load_publication'
 )
 
 router.register(r"history", readViews.HistoryListViewSet, basename="loads_history")
