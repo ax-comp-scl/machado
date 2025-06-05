@@ -20,7 +20,6 @@ from rest_framework.response import Response
 
 from threading import Thread
 
-
 class OrganismViewSet(viewsets.GenericViewSet):
     """ViewSet for loading organism."""
 
@@ -96,7 +95,6 @@ class OrganismViewSet(viewsets.GenericViewSet):
             },
             status=status.HTTP_200_OK,
         )
-
 
 class RelationsOntologyViewSet(viewsets.GenericViewSet):
     """ViewSet for loading relations ontology."""
@@ -218,7 +216,6 @@ class PublicationViewSet(viewsets.GenericViewSet):
             status=status.HTTP_200_OK,
         )
 
-
 class SequenceOntologyViewSet(viewsets.GenericViewSet):
     """ViewSet for loading sequence ontology."""
 
@@ -307,8 +304,6 @@ class GeneOntologyViewSet(viewsets.GenericViewSet):
         """Handle the POST request for loading organism."""
         in_memory_file = request.FILES["file"]
 
-        print(in_memory_file.name)
-
         destination = open(f"/tmp/{in_memory_file.name}", "wt")
         destination.write(in_memory_file.read().decode("ascii", "ignore"))
         destination.close()
@@ -332,6 +327,164 @@ class GeneOntologyViewSet(viewsets.GenericViewSet):
                 "status": "Submited successfully",
                 "call_command": "load_gene_ontology",
                 "file": f"/tmp/{in_memory_file.name}",
+            },
+            status=status.HTTP_200_OK,
+        )
+
+class FastaViewSet(viewsets.GenericViewSet):
+    """ViewSet for loading fasta"""
+
+    serializer_class = loadSerializers.FastaSerializer
+    permission_classes = [IsAuthenticated]
+    operation_summary = "Load fasta"
+    operation_description = operation_summary + "<br /><br />"
+    operation_description += "<li>URL: https://github.comhttps//github.com/lmb-embrapa/machado/blob/master/extras/sample.tar.gz/lmb-embrapa/machado/blob/master/extras/sample.tar.gz</li>"
+    operation_description += "<li>File: organism_chrs.fa/li>"
+
+    file_param = openapi.Parameter(
+        "file",
+        openapi.IN_QUERY,
+        description="FASTA File",
+        required=True,
+        type=openapi.TYPE_FILE,
+    )
+
+    organism_param = openapi.Parameter(
+        "organism",
+        openapi.IN_QUERY,
+        description="Species name (eg. Homo sapiens, Mus musculus)",
+        required=True,
+        type=openapi.TYPE_STRING
+    )
+
+    soterm_param = openapi.Parameter(
+        "soterm",
+        openapi.IN_QUERY,
+        description="SO Sequence Ontology Term (eg. chromosome, assembly) *",
+        required=True,
+        type=openapi.TYPE_STRING
+    )
+
+    description_param = openapi.Parameter(
+        "description",
+        openapi.IN_QUERY,
+        description="DESCRIPTION",
+        required=False,
+        type=openapi.TYPE_STRING
+    )
+
+    url_param = openapi.Parameter(
+        "url",
+        openapi.IN_QUERY,
+        description="URL",
+        required=False,
+        type=openapi.TYPE_STRING
+    )
+
+    doi_param = openapi.Parameter(
+        "doi",
+        openapi.IN_QUERY,
+        description="DOI of a reference stored using load_publication (eg. 10.1111/s12122-012-1313-4)",
+        required=False,
+        type=openapi.TYPE_STRING
+    )
+
+    nosequence_param = openapi.Parameter(
+        "nosequence",
+        openapi.IN_QUERY,
+        description="Don't load the sequences",
+        required=False,
+        type=openapi.TYPE_BOOLEAN
+    )
+
+    cpu_param = openapi.Parameter(
+        "cpu",
+        openapi.IN_QUERY,
+        description="Number of threads",
+        required=False,
+        type=openapi.TYPE_INTEGER
+    )
+    
+    @swagger_auto_schema(
+        manual_parameters=[
+            file_param,
+            organism_param,
+            soterm_param,
+            description_param,
+            url_param,
+            doi_param,
+            nosequence_param,
+            cpu_param
+        ],
+        operation_summary=operation_summary,
+        operation_description=operation_description,
+    )
+    def create(self, request):
+        """Handle the POST request for loading fasta."""
+
+        file = request.FILES.get("file")
+        organism = request.data.get("organism", "")
+        soterm = request.data.get("soterm", "")
+        description = request.data.get("description", "")
+        url = request.data.get("url", "")
+        doi = request.data.get("doi", "")
+        nosequence = request.data.get("nosequence", "")
+        cpu = int(request.data.get("cpu", 1))
+
+        if not file:
+            return Response(
+                {"error": "No file uploaded."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        if not bool(organism):
+            return Response(
+                {"error": "Organism is a required field."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        
+        if not bool(soterm):
+            return Response(
+                {"error": "soterm  is a required field."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        file_path = f"/tmp/{file.name}"
+        with open(file_path, "wb") as dest:
+            for chunk in file.chunks():
+                dest.write(chunk)
+
+        thread = Thread(
+            target=call_command,
+            args=("load_fasta"),
+            kwargs={
+                "file": file_path,
+                "organism": organism,
+                "soterm": soterm,
+                "description": description,
+                "url": url,
+                "doi": doi,
+                "nosequence": nosequence,
+                "cpu": cpu,
+                "verbosity": 0,
+            },
+            daemon=True,
+        )
+
+        thread.start()
+
+        return Response(
+            {
+                "status": "Submitted successfully",
+                "call_command": "load_fasta",
+                "file": file_path,
+                "organism": organism,
+                "soterm": soterm,
+                "description": description,
+                "url": url,
+                "doi": doi,
+                "nosequence": nosequence,
+                "cpu": cpu,
             },
             status=status.HTTP_200_OK,
         )
