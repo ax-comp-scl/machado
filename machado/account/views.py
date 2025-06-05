@@ -11,7 +11,7 @@ from rest_framework.exceptions import NotFound
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
-from .serializers import UserSerializer
+from .serializers import UserCreateSerializer, UserSerializer
 import re
 
 class PublicUserActions(viewsets.GenericViewSet):
@@ -189,34 +189,14 @@ class AdminUserActions(viewsets.GenericViewSet):
     )
     @action(detail=False, methods=['post'])
     def create(self, request):
-        requestUsername = request.data.get('username')
-        requestPassword = request.data.get('password')
-        requestEmail = request.data.get('email')
-        requestFirstName = request.data.get('first_name', '')
-        requestLastName = request.data.get('last_name', '')
-        requestIsStaff = request.data.get('is_staff')
-        if requestUsername == None or requestPassword == None or requestEmail == None:
-            return Response(status=status.HTTP_400_BAD_REQUEST, data="Username, email and password are required")
-
-        if len(requestUsername) < 3 or len(requestPassword) < 3:
-            return Response(status=status.HTTP_400_BAD_REQUEST, data="Username and password must be at least 3 characters long")
-
-        email_regex = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
-        if not re.match(email_regex, requestEmail):
-            return Response(status=status.HTTP_400_BAD_REQUEST, data="Invalid email format")
-    
-        if requestIsStaff == 1:
-            requestIsStaff = True
-        else:
-            requestIsStaff = False
-
-        user = User.objects.create_user(
-            username=requestUsername, password=requestPassword, first_name=requestFirstName, 
-            last_name=requestLastName, email=requestEmail, is_staff=requestIsStaff
-        )
-        if user:
-            return Response(status=status.HTTP_201_CREATED, data="User created")
-        return Response(status=status.HTTP_400_BAD_REQUEST, data="User not created")
+        serializer = UserCreateSerializer(data=request.data)
+        if serializer.is_valid():
+            user = serializer.save()
+            return Response(
+                {"detail": "Usuário criado com sucesso.", "id": user.id},
+                status=status.HTTP_201_CREATED
+            )
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @swagger_auto_schema(
         operation_summary="Delete a user",
