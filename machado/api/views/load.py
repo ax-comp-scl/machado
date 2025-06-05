@@ -597,7 +597,7 @@ class FeatureAnnotationViewSet(viewsets.GenericViewSet):
 
         thread = Thread(
             target=call_command,
-            args=("load_feature_annotation"),
+            args=("load_feature_annotation",),
             kwargs={
                 "file": file_path,
                 "organism": organism,
@@ -705,7 +705,7 @@ class FeatureSequenceViewSet(viewsets.GenericViewSet):
 
         thread = Thread(
             target=call_command,
-            args=("load_feature_sequence"),
+            args=("load_feature_sequence",),
             kwargs={
                 "file": file_path,
                 "organism": organism,
@@ -787,7 +787,7 @@ class FeaturePublicationViewSet(viewsets.GenericViewSet):
 
         thread = Thread(
             target=call_command,
-            args=("load_feature_publication"),
+            args=("load_feature_publication",),
             kwargs={
                 "file": file_path,
                 "organism": organism,
@@ -890,7 +890,7 @@ class FeatureDBxRefViewSet(viewsets.GenericViewSet):
 
         thread = Thread(
             target=call_command,
-            args=("load_feature_dbxrefs"),
+            args=("load_feature_dbxrefs",),
             kwargs={
                 "file": file_path,
                 "organism": organism,
