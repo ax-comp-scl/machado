@@ -25,6 +25,7 @@ from machado.api.serializers import read as readSerializers
 from machado.loaders.common import retrieve_organism, retrieve_feature_id
 from machado.models import Analysis, Analysisfeature, Cvterm, Organism, Pub
 from machado.models import Feature, Featureloc, Featureprop, FeatureRelationship
+from django.db.models import Q
 from machado.models import History
 
 from re import escape, search, IGNORECASE
@@ -1001,8 +1002,21 @@ class HistoryListViewSet(viewsets.ViewSet):
     def list(self, request):
         """List"""
         paginate_by = 10
-        order_by = request.GET.get('ordering', 'created_at') 
-        history_list = History.objects.all().order_by(order_by)
+        order_by = request.GET.get('ordering', '-created_at')
+        allowed_ordering_fields = ['created_at', '-created_at', 'another_field', '-another_field']
+        if order_by not in allowed_ordering_fields:
+            order_by = '-created_at'
+        
+        search_term = request.GET.get('search', None)
+        history_list = History.objects.all()
+        if search_term:
+            history_list = history_list.filter(
+                Q(command__icontains=search_term) |
+                Q(description__icontains=search_term) 
+            )
+        
+        history_list = history_list.order_by(order_by)
+        
         paginator = Paginator(history_list, paginate_by)
         page_number = request.GET.get('page', 1)
         page_obj = paginator.get_page(page_number)
