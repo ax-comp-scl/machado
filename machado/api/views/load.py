@@ -488,3 +488,432 @@ class FastaViewSet(viewsets.GenericViewSet):
             },
             status=status.HTTP_200_OK,
         )
+
+class FeatureAnnotationViewSet(viewsets.GenericViewSet):
+    """ViewSet for loading feature annotation"""
+    serializer_class = loadSerializers.LoadFeatureAnnotationSerializer
+    permission_classes = [IsAuthenticated]
+    operation_summary = "Load feature annotation"
+    operation_description = operation_summary + "<br /><br />"
+    operation_description += "<li>URL: https://github.comhttps//github.com/lmb-embrapa/machado/blob/master/extras/sample.tar.gz/lmb-embrapa/machado/blob/master/extras/sample.tar.gz</li>"
+    operation_description += "<li>File: feature_annotation.tab/li>"
+    file_param = openapi.Parameter(
+        "file",
+        openapi.IN_QUERY,
+        description="Feature annotation File",
+        required=True,
+        type=openapi.TYPE_FILE,
+    )
+    organism_param = openapi.Parameter(
+        "organism",
+        openapi.IN_QUERY,
+        description="Species name (eg. Homo sapiens, Mus musculus)",
+        required=True,
+        type=openapi.TYPE_STRING
+    )
+
+    soterm_param = openapi.Parameter(
+        "soterm",
+        openapi.IN_QUERY,
+        description="SO Sequence Ontology Term (eg. chromosome, assembly) *",
+        required=True,
+        type=openapi.TYPE_STRING
+    )
+
+    cvterm_param = openapi.Parameter(
+        "cvterm",
+        openapi.IN_QUERY,
+        description="cvterm.name from cv feature_property. (eg. display, note, product, alias, ontology_term, annotation)",
+        required=True,
+        type=openapi.TYPE_STRING
+    )
+
+    doi_param = openapi.Parameter(
+        "doi",
+        openapi.IN_QUERY,
+        description="DOI of a reference stored using load_publication (eg. 10.1111/s12122-012-1313-4)",
+        required=False,
+        type=openapi.TYPE_STRING
+    )
+
+    cpu_param = openapi.Parameter(
+        "cpu",
+        openapi.IN_QUERY,
+        description="Number of threads",
+        required=False,
+        type=openapi.TYPE_INTEGER
+    )
+
+    @swagger_auto_schema(
+        manual_parameters=[
+            file_param,
+            organism_param,
+            soterm_param,
+            cvterm_param,
+            doi_param,
+            cpu_param
+        ],
+        operation_summary=operation_summary,
+        operation_description=operation_description,
+    )
+
+    def create(self, request):
+        """Handle the POST request for loading feature annotation."""
+        file = request.FILES.get("file")
+        organism = request.data.get("organism", "")
+        soterm = request.data.get("soterm", "")
+        cvterm = request.data.get("cvterm", "")
+        doi = request.data.get("doi", "")
+        cpu = int(request.data.get("cpu", 1))
+
+        if not file:
+            return Response(
+                {"error": "No file uploaded."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        if not bool(organism):
+            return Response(
+                {"error": "Organism is a required field."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        if not bool(soterm):
+            return Response(
+                {"error": "soterm is a required field."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        
+        if not bool(cvterm):
+            return Response(
+                {"error": "cvterm is a required field."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        file_path = f"/tmp/{file.name}"
+        with open(file_path, "wb") as dest:
+            for chunk in file.chunks():
+                dest.write(chunk)
+
+        thread = Thread(
+            target=call_command,
+            args=("load_feature_annotation"),
+            kwargs={
+                "file": file_path,
+                "organism": organism,
+                "soterm": soterm,
+                "cvterm": cvterm,
+                "doi": doi,
+                "cpu": cpu,
+                "verbosity": 0,
+            },
+            daemon=True,
+        )
+        thread.start()
+
+        return Response(
+            {
+                "status": "Submitted successfully",
+                "call_command": "load_feature_annotation",
+                "file": file_path,
+                "organism": organism,
+                "soterm": soterm,
+                "cvterm": cvterm,
+                "doi": doi,
+                "cpu": cpu,
+            },
+            status=status.HTTP_200_OK,)
+
+class FeatureSequenceViewSet(viewsets.GenericViewSet):
+    """ViewSet for loading feature sequence"""
+    serializer_class = loadSerializers.LoadFeatureSequenceSerializer
+    permission_classes = [IsAuthenticated]
+    operation_summary = "Load feature sequence"
+    operation_description = operation_summary + "<br /><br />"
+    operation_description += "<li>URL: https://github.comhttps//github.com/lmb-embrapa/machado/blob/master/extras/sample.tar.gz/lmb-embrapa/machado/blob/master/extras/sample.tar.gz</li>"
+    operation_description += "<li>File: Athaliana_transcripts.fasta/li>"
+    file_param = openapi.Parameter(
+        "file",
+        openapi.IN_QUERY,
+        description="Feature sequence File",
+        required=True,
+        type=openapi.TYPE_FILE,
+    )
+    organism_param = openapi.Parameter(
+        "organism",
+        openapi.IN_QUERY,
+        description="Species name (eg. Homo sapiens, Mus musculus)",
+        required=True,
+        type=openapi.TYPE_STRING
+    )
+
+    soterm_param = openapi.Parameter(
+        "soterm",
+        openapi.IN_QUERY,
+        description="SO Sequence Ontology Term (eg. chromosome, assembly) *",
+        required=True,
+        type=openapi.TYPE_STRING
+    )
+
+    cpu_param = openapi.Parameter(
+        "cpu",
+        openapi.IN_QUERY,
+        description="Number of threads",
+        required=False,
+        type=openapi.TYPE_INTEGER
+    )
+
+    @swagger_auto_schema(
+        manual_parameters=[
+            file_param,
+            organism_param,
+            soterm_param,
+        ],
+        operation_summary=operation_summary,
+        operation_description=operation_description,
+    )
+
+    def create(self, request):
+        """Handle the POST request for loading feature sequence."""
+        file = request.FILES.get("file")
+        organism = request.data.get("organism", "")
+        soterm = request.data.get("soterm", "")
+        cpu = int(request.data.get("cpu", 1))
+
+        if not file:
+            return Response(
+                {"error": "No file uploaded."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        if not bool(organism):
+            return Response(
+                {"error": "Organism is a required field."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        if not bool(soterm):
+            return Response(
+                {"error": "soterm is a required field."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        file_path = f"/tmp/{file.name}"
+        with open(file_path, "wb") as dest:
+            for chunk in file.chunks():
+                dest.write(chunk)
+
+        thread = Thread(
+            target=call_command,
+            args=("load_feature_sequence"),
+            kwargs={
+                "file": file_path,
+                "organism": organism,
+                "soterm": soterm,
+                "verbosity": 0,
+            },
+            daemon=True,
+        )
+        thread.start()
+
+        return Response(
+            {
+                "status": "Submitted successfully",
+                "call_command": "load_feature_sequence",
+                "file": file_path,
+                "organism": organism,
+                "soterm": soterm,
+                "cpu": cpu,
+            },
+            status=status.HTTP_200_OK,)
+    
+class FeaturePublicationViewSet(viewsets.GenericViewSet):
+    """ViewSet for loading feature publication"""
+    serializer_class = loadSerializers.LoadFeaturePublicationSerializer
+    permission_classes = [IsAuthenticated]
+    operation_summary = "Load feature publication"
+    operation_description = operation_summary + "<br /><br />"
+    operation_description += "<li>URL: https://github.comhttps//github.com/lmb-embrapa/machado/blob/master/extras/sample.tar.gz/lmb-embrapa/machado/blob/master/extras/sample.tar.gz</li>"
+    operation_description += "<li>File: feature_publication.tab/li>"
+    file_param = openapi.Parameter(
+        "file",
+        openapi.IN_QUERY,
+        description="Feature publication File",
+        required=True,
+        type=openapi.TYPE_FILE,
+    )
+    organism_param = openapi.Parameter(
+        "organism",
+        openapi.IN_QUERY,
+        description="Species name (eg. Homo sapiens, Mus musculus)",
+        required=True,
+        type=openapi.TYPE_STRING
+    )
+
+    cpu_param = openapi.Parameter(
+        "cpu",
+        openapi.IN_QUERY,
+        description="Number of threads",
+        required=False,
+        type=openapi.TYPE_INTEGER
+    )
+
+    @swagger_auto_schema(
+        manual_parameters=[
+            file_param,
+            organism_param,
+            cpu_param
+        ],
+        operation_summary=operation_summary,
+        operation_description=operation_description,
+    )
+
+    def create(self, request):
+        """Handle the POST request for loading feature publication."""
+        file = request.FILES.get("file")
+        organism = request.data.get("organism", "")
+        cpu = int(request.data.get("cpu", 1))
+
+        if not file:
+            return Response(
+                {"error": "No file uploaded."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        if not bool(organism):
+            return Response(
+                {"error": "Organism is a required field."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        file_path = f"/tmp/{file.name}"
+        with open(file_path, "wb") as dest:
+            for chunk in file.chunks():
+                dest.write(chunk)
+
+        thread = Thread(
+            target=call_command,
+            args=("load_feature_publication"),
+            kwargs={
+                "file": file_path,
+                "organism": organism,
+                "cpu": cpu,
+                "verbosity": 0,
+            },
+            daemon=True,
+        )
+        thread.start()
+
+        return Response(
+            {
+                "status": "Submitted successfully",
+                "call_command": "load_feature_publication",
+                "file": file_path,
+                "organism": organism,
+                "cpu": cpu,
+            },
+            status=status.HTTP_200_OK,)
+    
+class FeatureDBxRefViewSet(viewsets.GenericViewSet):
+    """ViewSet for loading feature dbxrefs"""
+    serializer_class = loadSerializers.LoadFeatureDBxRefSerializer
+    permission_classes = [IsAuthenticated]
+    operation_summary = "Load feature dbxrefs"
+    operation_description = operation_summary + "<br /><br />"
+    operation_description += "<li>URL: https://github.comhttps//github.com/lmb-embrapa/machado/blob/master/extras/sample.tar.gz/lmb-embrapa/machado/blob/master/extras/sample.tar.gz</li>"
+    operation_description += "<li>File: feature_dbxrefs.tab/li>"
+    file_param = openapi.Parameter(
+        "file",
+        openapi.IN_QUERY,
+        description="Feature dbxrefs File",
+        required=True,
+        type=openapi.TYPE_FILE,
+    )
+    organism_param = openapi.Parameter(
+        "organism",
+        openapi.IN_QUERY,
+        description="Species name (eg. Homo sapiens, Mus musculus)",
+        required=True,
+        type=openapi.TYPE_STRING
+    )
+
+    soterm_param = openapi.Parameter(
+        "soterm",
+        openapi.IN_QUERY,
+        description="SO Sequence Ontology Term (eg. chromosome, assembly) *",
+        required=True,
+        type=openapi.TYPE_STRING
+    )
+
+    cpu_param = openapi.Parameter(
+        "cpu",
+        openapi.IN_QUERY,
+        description="Number of threads",
+        required=False,
+        type=openapi.TYPE_INTEGER
+    )
+
+    @swagger_auto_schema(
+        manual_parameters=[
+            file_param,
+            organism_param,
+            soterm_param,
+            cpu_param
+        ],
+        operation_summary=operation_summary,
+        operation_description=operation_description,
+    )
+
+    def create(self, request):
+        """Handle the POST request for loading feature dbxrefs."""
+        file = request.FILES.get("file")
+        organism = request.data.get("organism", "")
+        soterm = request.data.get("soterm", "")
+        cpu = int(request.data.get("cpu", 1))
+
+        if not file:
+            return Response(
+                {"error": "No file uploaded."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        if not bool(organism):
+            return Response(
+                {"error": "Organism is a required field."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        if not bool(soterm):
+            return Response(
+                {"error": "soterm is a required field."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        file_path = f"/tmp/{file.name}"
+        with open(file_path, "wb") as dest:
+            for chunk in file.chunks():
+                dest.write(chunk)
+
+        thread = Thread(
+            target=call_command,
+            args=("load_feature_dbxrefs"),
+            kwargs={
+                "file": file_path,
+                "organism": organism,
+                "soterm": soterm,
+                "verbosity": 0,
+            },
+            daemon=True,
+        )
+        thread.start()
+
+        return Response(
+            {
+                "status": "Submitted successfully",
+                "call_command": "load_feature_dbxrefs",
+                "file": file_path,
+                "organism": organism,
+                "soterm": soterm,
+                "cpu": cpu,
+            },
+            status=status.HTTP_200_OK,)

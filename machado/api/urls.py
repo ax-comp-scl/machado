@@ -132,6 +132,30 @@ router.register(
     basename="load_fasta",
 )
 
+router.register(
+    r"load/feature_annotation", 
+    loadViews.FeatureAnnotationViewSet, 
+    basename='load_feature_annotation'
+)
+
+router.register(
+    r"load/feature_sequence", 
+    loadViews.FeatureSequenceViewSet, 
+    basename='load_feature_sequence'
+)
+
+router.register(
+    r"load/feature_dbxrefs", 
+    loadViews.FeatureDBxRefViewSet, 
+    basename='load_feature_dbxrefs'
+)
+
+router.register(
+    r"load/feature_publication", 
+    loadViews.FeaturePublicationViewSet, 
+    basename='load_feature_publication'
+)
+
 # history
 
 router.register(r"history", readViews.HistoryListViewSet, basename="loads_history")
