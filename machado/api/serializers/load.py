@@ -43,7 +43,7 @@ class LoadFeatureSequenceSerializer(serializers.Serializer):
 
 class LoadFeaturePublicationSerializer(serializers.Serializer):
     file = serializers.FileField()
-    organism = serializers.TextField(required=True, help_text="Species name (eg. Homo sapiens, Mus musculus)")
+    organism = serializers.TextField(required=False, help_text="Species name (eg. Homo sapiens, Mus musculus)")
     cpu = serializers.IntegerField(required=False, min_value=1, default=1, help_text="Number of threads")
 
 class LoadFeatureDBxRefSerializer(serializers.Serializer):

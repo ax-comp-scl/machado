@@ -746,7 +746,7 @@ class FeaturePublicationViewSet(viewsets.GenericViewSet):
         "organism",
         openapi.IN_QUERY,
         description="Species name (eg. Homo sapiens, Mus musculus)",
-        required=True,
+        required=False,
         type=openapi.TYPE_STRING
     )
 
@@ -777,12 +777,6 @@ class FeaturePublicationViewSet(viewsets.GenericViewSet):
         if not file:
             return Response(
                 {"error": "No file uploaded."},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        if not bool(organism):
-            return Response(
-                {"error": "Organism is a required field."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
