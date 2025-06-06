@@ -456,7 +456,7 @@ class FastaViewSet(viewsets.GenericViewSet):
 
         thread = Thread(
             target=call_command,
-            args=("load_fasta"),
+            args=("load_fasta",),
             kwargs={
                 "file": file_path,
                 "organism": organism,
