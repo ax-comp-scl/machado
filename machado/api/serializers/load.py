@@ -27,6 +27,31 @@ class FastaSerializer(serializers.Serializer):
     nosequence = serializers.CharField(required=False, help_text="Don't load the sequences")
     cpu = serializers.IntegerField(required=False, min_value=1, default=1, help_text="Number of threads")
 
+class LoadFeatureAnnotationSerializer(serializers.Serializer):
+    file = serializers.FileField()
+    organism = serializers.CharField(required=True, help_text="Species name (eg. Homo sapiens, Mus musculus)")
+    soterm = serializers.CharField(required=True, help_text="SO Sequence Ontology Term (eg. mRNA, polypeptide)")
+    cvterm = serializers.CharField(required=True, help_text="cvterm.name from cv feature_property. (eg. display, note, product, alias, ontology_term, annotation)")
+    doi = serializers.CharField(required=False, help_text="DOI of a reference stored using load_publication (eg. 10.1111/s12122-012-1313-4)")
+    cpu = serializers.IntegerField(required=False, min_value=1, default=1, help_text="Number of threads")
+
+class LoadFeatureSequenceSerializer(serializers.Serializer):
+    file = serializers.FileField()
+    organism = serializers.CharField(required=True, help_text="Species name (eg. Homo sapiens, Mus musculus)")
+    soterm = serializers.CharField(required=True, help_text="SO Sequence Ontology Term (eg. mRNA, polypeptide)")
+    cpu = serializers.IntegerField(required=False, min_value=1, default=1, help_text="Number of threads")
+
+class LoadFeaturePublicationSerializer(serializers.Serializer):
+    file = serializers.FileField()
+    organism = serializers.CharField(required=False, help_text="Species name (eg. Homo sapiens, Mus musculus)")
+    cpu = serializers.IntegerField(required=False, min_value=1, default=1, help_text="Number of threads")
+
+class LoadFeatureDBxRefSerializer(serializers.Serializer):
+    file = serializers.FileField()
+    organism = serializers.CharField(required=True, help_text="Species name (eg. Homo sapiens, Mus musculus)")
+    soterm = serializers.CharField(required=True, help_text="SO Sequence Ontology Term (eg. mRNA, polypeptide)")
+    cpu = serializers.IntegerField(required=False, min_value=1, default=1, help_text="Number of threads")
+
 class OrganismSerializer(serializers.Serializer):
     """Organism serializer."""
 
