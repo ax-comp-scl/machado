@@ -158,7 +158,7 @@ router.register(
 
 router.register(
     r"load/gff",
-    loadViews.GFFView,
+    loadViews.GFFViewSet,
     basename="load_gff"
 )
 
