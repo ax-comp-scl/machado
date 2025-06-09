@@ -726,7 +726,7 @@ class FeatureSequenceViewSet(viewsets.GenericViewSet):
                 "cpu": cpu,
             },
             status=status.HTTP_200_OK,)
-    
+
 class FeaturePublicationViewSet(viewsets.GenericViewSet):
     """ViewSet for loading feature publication"""
     serializer_class = loadSerializers.LoadFeaturePublicationSerializer
@@ -807,7 +807,7 @@ class FeaturePublicationViewSet(viewsets.GenericViewSet):
                 "cpu": cpu,
             },
             status=status.HTTP_200_OK,)
-    
+
 class FeatureDBxRefViewSet(viewsets.GenericViewSet):
     """ViewSet for loading feature dbxrefs"""
     serializer_class = loadSerializers.LoadFeatureDBxRefSerializer
