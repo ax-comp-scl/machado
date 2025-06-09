@@ -156,6 +156,12 @@ router.register(
     basename='load_feature_publication'
 )
 
+router.register(
+    r"load/gff",
+    loadViews.GFFViewSet,
+    basename="load_gff"
+)
+
 # history
 
 router.register(r"history", readViews.HistoryListViewSet, basename="loads_history")
