@@ -96,6 +96,37 @@ class OrganismViewSet(viewsets.GenericViewSet):
             status=status.HTTP_200_OK,
         )
 
+    def destroy(self, request):
+        """Handle the DELETE request for loading organism."""
+        organism = request.data.get("organism")
+
+        if not organism:
+            return Response(
+                {"error": "Organism is a required field."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        thread = Thread(
+            target=call_command,
+            args=("remove_organism",),
+            kwargs=(
+                {
+                    "organism": organism
+                }
+            ),
+            daemon=True
+        )
+
+        thread.start()
+
+        return Response(
+            {
+                "status": "Submited successfully",
+                "call_command": "remove_organism",
+            },
+            status=status.HTTP_204_NO_CONTENT,
+        )
+
 class RelationsOntologyViewSet(viewsets.GenericViewSet):
     """ViewSet for loading relations ontology."""
 
