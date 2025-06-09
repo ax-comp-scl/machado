@@ -71,3 +71,11 @@ class OrganismSerializer(serializers.Serializer):
     comment = serializers.CharField(
         required=False, help_text="Additional comments about the organism."
     )
+
+class GFFSerializer(serializers.Serializer):
+    file = serializers.FileField(required=True, help_text="GFF3 genome file indexed with tabix")
+    organism = serializers.CharField(required=True, help_text="Species name (eg. Homo sapiens, Mus musculus)")
+    ignore = serializers.CharField(required=False, help_text="List of feature types to ignore (eg. chromosome scaffold)")
+    doi = serializers.CharField(required=False, help_text="DOI of a reference stored using load_publication (eg. 10.1111/s12122-012-1313-4)")
+    qtl = serializers.CharField(required=False, help_text="Set this flag to handle GFF files from QTLDB")
+    cpu = serializers.IntegerField(required=False, min_value=1, default=1, help_text="Number of threads")
