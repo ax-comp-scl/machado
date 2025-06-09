@@ -911,3 +911,131 @@ class FeatureDBxRefViewSet(viewsets.GenericViewSet):
                 "cpu": cpu,
             },
             status=status.HTTP_200_OK,)
+    
+class GFFViewSet(viewsets.GenericViewSet):
+    """ViewSet for loading GFF"""
+    serializer_class = loadSerializers.GFFSerializer
+    permission_classes = [IsAuthenticated]
+    operation_summary = "Load GFF"
+    operation_description = operation_summary + "<br /><br />"
+    operation_description += "<li>URL: https://github.comhttps//github.com/lmb-embrapa/machado/blob/master/extras/sample.tar.gz/lmb-embrapa/machado/blob/master/extras/sample.tar.gz</li>"
+    operation_description += "<li>File: organism_genes_sorted.gff3.gz</li>"
+
+    file_param = openapi.Parameter(
+        "file",
+        openapi.IN_QUERY,
+        description="GFF3 genome file indexed with tabix",
+        required=True,
+        type=openapi.TYPE_FILE,
+    )
+
+    organism_param = openapi.Parameter(
+        "organism",
+        openapi.IN_QUERY,
+        description="Species name (eg. Homo sapiens, Mus musculus)",
+        required=True,
+        type=openapi.TYPE_STRING
+    )
+
+    ignore_param = openapi.Parameter(
+        "ignore",
+        openapi.IN_QUERY,
+        description="List of feature types to ignore (eg. chromosome scaffold)",
+        required=False,
+        type=openapi.TYPE_STRING
+    )
+
+    doi_param = openapi.Parameter(
+        "doi",
+        openapi.IN_QUERY,
+        description="DOI of a reference stored using load_publication (eg. 10.1111/s12122-012-1313-4)",
+        required=False,
+        type=openapi.TYPE_STRING
+    )
+
+    qtl_param = openapi.Parameter(
+        "qtl",
+        openapi.IN_QUERY,
+        description="Set this flag to handle GFF files from QTLDB",
+        required=False,
+        type=openapi.TYPE_BOOLEAN
+    )
+
+    cpu_param = openapi.Parameter(
+        "cpu",
+        openapi.IN_QUERY,
+        description="Number of threads",
+        required=False,
+        default=1,
+        type=openapi.TYPE_INTEGER
+    )
+    
+    @swagger_auto_schema(
+        manual_parameters=[
+            file_param,
+            organism_param,
+            ignore_param,
+            doi_param,
+            qtl_param,
+            cpu_param
+        ],
+        operation_summary=operation_summary,
+        operation_description=operation_description,
+    )
+    def create(self, request):
+        """Handle the POST request for loading GFF."""
+
+        file = request.FILES.get("file")
+        organism = request.data.get("organism", "")
+        ignore = request.data.get("ignore", "")
+        doi = request.data.get("doi", "")
+        qtl = request.data.get("qtl", "")
+        cpu = int(request.data.get("cpu", 1))
+
+        if not file:
+            return Response(
+                {"error": "No file uploaded."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        if not bool(organism):
+            return Response(
+                {"error": "Organism is a required field."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        file_path = f"/tmp/{file.name}"
+        with open(file_path, "wb") as dest:
+            for chunk in file.chunks():
+                dest.write(chunk)
+
+        thread = Thread(
+            target=call_command,
+            args=("load_gff",),
+            kwargs={
+                "file": file_path,
+                "organism": organism,
+                "ignore": ignore,
+                "doi": doi,
+                "qtl": qtl,
+                "cpu": cpu,
+                "verbosity": 0,
+            },
+            daemon=True,
+        )
+
+        thread.start()
+
+        return Response(
+            {
+                "status": "Submitted successfully",
+                "call_command": "load_gff",
+                "file": file_path,
+                "organism": organism,
+                "ignore": ignore,
+                "doi": doi,
+                "qtl": qtl,
+                "cpu": cpu,
+            },
+            status=status.HTTP_200_OK,
+        )
