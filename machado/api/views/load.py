@@ -96,22 +96,15 @@ class OrganismViewSet(viewsets.GenericViewSet):
             status=status.HTTP_200_OK,
         )
 
-    def destroy(self, request):
+    def destroy(self, request, *args, **kwargs):
         """Handle the DELETE request for loading organism."""
-        organism = request.data.get("organism")
-
-        if not organism:
-            return Response(
-                {"error": "Organism is a required field."},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
+        pk = kwargs.get("organism")
         thread = Thread(
             target=call_command,
             args=("remove_organism",),
             kwargs=(
                 {
-                    "organism": organism
+                    "organism": pk
                 }
             ),
             daemon=True
