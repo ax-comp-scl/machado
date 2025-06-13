@@ -1016,17 +1016,24 @@ class GFFViewSet(viewsets.GenericViewSet):
     def create(self, request):
         """Handle the POST request for loading GFF."""
 
-        file = request.FILES.get("file")
+        gffGile = request.FILES.get("file")
+        tbiFile = request.FILES.get("tbiFile")
         organism = request.data.get("organism", "")
         ignore = request.data.get("ignore", "")
         doi = request.data.get("doi", "")
         qtl = request.data.get("qtl", "")
         cpu = int(request.data.get("cpu", 1))
 
-        if not file:
+        if not gffGile:
             return Response(
-                {"error": "No file uploaded."},
+                {"error": "GFF file is required."},
                 status=status.HTTP_400_BAD_REQUEST,
+            )
+        
+        if not tbiFile:
+            return Response(
+                {"error": "Indexed GFF file is required."},
+                status=status.HTTP_400_BAD_REQUEST
             )
 
         if not bool(organism):
@@ -1035,9 +1042,14 @@ class GFFViewSet(viewsets.GenericViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        file_path = f"/tmp/{file.name}"
+        file_path = f"/tmp/{gffGile.name}"
         with open(file_path, "wb") as dest:
-            for chunk in file.chunks():
+            for chunk in gffGile.chunks():
+                dest.write(chunk)
+
+        tbi_path = f"/tmp/{tbiFile.name}"
+        with open(tbi_path, "wb") as dest:
+            for chunk in tbiFile.chunks():
                 dest.write(chunk)
 
         thread = Thread(
@@ -1069,4 +1081,35 @@ class GFFViewSet(viewsets.GenericViewSet):
                 "cpu": cpu,
             },
             status=status.HTTP_200_OK,
+        )
+    
+    def destroy(self, request):
+        """Handle the DELETE request for loading gff."""
+        file = request.data.get("file")
+
+        if not file:
+            return Response(
+                {"error": "File is a required field."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        thread = Thread(
+            target=call_command,
+            args=("remove_file",),
+            kwargs=(
+                {
+                    "file": file
+                }
+            ),
+            daemon=True
+        )
+
+        thread.start()
+
+        return Response(
+            {
+                "status": "Submited successfully",
+                "call_command": "remove_file",
+            },
+            status=status.HTTP_204_NO_CONTENT,
         )
