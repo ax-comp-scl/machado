@@ -26,6 +26,10 @@ class UserCreateSerializer(serializers.Serializer):
 
     def create(self, validated_data):
         is_staff = validated_data.pop('is_staff', False)
+
+        self.validate_email(validated_data['email'])
+        self.validate_username(validated_data['username'])
+
         user = User.objects.create_user(
             username=validated_data['username'],
             email=validated_data['email'],
