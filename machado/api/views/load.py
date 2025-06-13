@@ -50,6 +50,13 @@ class OrganismViewSet(viewsets.GenericViewSet):
         },
     )
 
+    delete_request_body = openapi.Schema(
+        type=openapi.TYPE_OBJECT,
+        properties = {
+            "organism": openapi.Schema(type=openapi.TYPE_STRING, description="Genus Species")
+        }
+    )
+
     @swagger_auto_schema(
         request_body=request_body,
         operation_summary=operation_summary,
@@ -96,6 +103,11 @@ class OrganismViewSet(viewsets.GenericViewSet):
             status=status.HTTP_200_OK,
         )
 
+    @swagger_auto_schema(
+        request_body=delete_request_body,
+        operation_summary=operation_summary,
+        operation_description=operation_description,
+    )
     def destroy(self, request):
         """Handle the DELETE request for loading organism."""
         organism = request.data.get("organism")
@@ -145,6 +157,13 @@ class RelationsOntologyViewSet(viewsets.GenericViewSet):
         type=openapi.TYPE_FILE,
     )
 
+    delete_request_body = openapi.Schema(
+        type=openapi.TYPE_OBJECT,
+        properties = {
+            "name": openapi.Schema(type=openapi.TYPE_STRING, description="CV Name (relationship)")
+        }
+    )
+
     @swagger_auto_schema(
         manual_parameters=[
             file_param,
@@ -184,6 +203,12 @@ class RelationsOntologyViewSet(viewsets.GenericViewSet):
             },
             status=status.HTTP_200_OK,
         )
+    
+    @swagger_auto_schema(
+        request_body=delete_request_body,
+        operation_summary=operation_summary,
+        operation_description=operation_description,
+    )
     def destroy(self, request):
         """Handle the DELETE request for loading ontology."""
         cvname = request.data.get("name")
@@ -295,6 +320,13 @@ class SequenceOntologyViewSet(viewsets.GenericViewSet):
         type=openapi.TYPE_FILE,
     )
 
+    delete_request_body = openapi.Schema(
+        type=openapi.TYPE_OBJECT,
+        properties = {
+            "name": openapi.Schema(type=openapi.TYPE_STRING, description="CV Name (sequence)")
+        }
+    )
+
     @swagger_auto_schema(
         manual_parameters=[
             file_param,
@@ -335,6 +367,12 @@ class SequenceOntologyViewSet(viewsets.GenericViewSet):
             },
             status=status.HTTP_200_OK,
         )
+    
+    @swagger_auto_schema(
+        request_body=delete_request_body,
+        operation_summary=operation_summary,
+        operation_description=operation_description,
+    )
     def destroy(self, request):
         """Handle the DELETE request for loading ontology."""
         cvname = request.data.get("name")
@@ -384,6 +422,13 @@ class GeneOntologyViewSet(viewsets.GenericViewSet):
         type=openapi.TYPE_FILE,
     )
 
+    delete_request_body = openapi.Schema(
+        type=openapi.TYPE_OBJECT,
+        properties = {
+            "name": openapi.Schema(type=openapi.TYPE_STRING, description="CV Name (gene_ontology)")
+        }
+    )
+
     @swagger_auto_schema(
         manual_parameters=[
             file_param,
@@ -421,6 +466,12 @@ class GeneOntologyViewSet(viewsets.GenericViewSet):
             },
             status=status.HTTP_200_OK,
         )
+    
+    @swagger_auto_schema(
+        request_body=delete_request_body,
+        operation_summary=operation_summary,
+        operation_description=operation_description,
+    )
     def destroy(self, request):
         """Handle the DELETE request for loading ontology."""
         cvname = request.data.get("name")
