@@ -184,6 +184,36 @@ class RelationsOntologyViewSet(viewsets.GenericViewSet):
             },
             status=status.HTTP_200_OK,
         )
+    def destroy(self, request):
+        """Handle the DELETE request for loading ontology."""
+        cvname = request.data.get("name")
+
+        if not cvname:
+            return Response(
+                {"error": "Name is a required field."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        thread = Thread(
+            target=call_command,
+            args=("remove_ontology",),
+            kwargs=(
+                {
+                    "name": cvname
+                }
+            ),
+            daemon=True
+        )
+
+        thread.start()
+
+        return Response(
+            {
+                "status": "Submited successfully",
+                "call_command": "remove_ontology",
+            },
+            status=status.HTTP_204_NO_CONTENT,
+        )
 
 class PublicationViewSet(viewsets.GenericViewSet):
     """ViewSet for loading publications from .bib file."""
@@ -305,6 +335,36 @@ class SequenceOntologyViewSet(viewsets.GenericViewSet):
             },
             status=status.HTTP_200_OK,
         )
+    def destroy(self, request):
+        """Handle the DELETE request for loading ontology."""
+        cvname = request.data.get("name")
+
+        if not cvname:
+            return Response(
+                {"error": "Name is a required field."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        thread = Thread(
+            target=call_command,
+            args=("remove_ontology",),
+            kwargs=(
+                {
+                    "name": cvname
+                }
+            ),
+            daemon=True
+        )
+
+        thread.start()
+
+        return Response(
+            {
+                "status": "Submited successfully",
+                "call_command": "remove_ontology",
+            },
+            status=status.HTTP_204_NO_CONTENT,
+        )
 
 class GeneOntologyViewSet(viewsets.GenericViewSet):
     """ViewSet for loading gene ontology."""
@@ -360,6 +420,36 @@ class GeneOntologyViewSet(viewsets.GenericViewSet):
                 "file": f"/tmp/{in_memory_file.name}",
             },
             status=status.HTTP_200_OK,
+        )
+    def destroy(self, request):
+        """Handle the DELETE request for loading ontology."""
+        cvname = request.data.get("name")
+
+        if not cvname:
+            return Response(
+                {"error": "Name is a required field."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        thread = Thread(
+            target=call_command,
+            args=("remove_ontology",),
+            kwargs=(
+                {
+                    "name": cvname
+                }
+            ),
+            daemon=True
+        )
+
+        thread.start()
+
+        return Response(
+            {
+                "status": "Submited successfully",
+                "call_command": "remove_ontology",
+            },
+            status=status.HTTP_204_NO_CONTENT,
         )
 
 class FastaViewSet(viewsets.GenericViewSet):
