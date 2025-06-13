@@ -1,0 +1,31 @@
+name: Format Check (Black + isort)
+
+on:
+  push:
+    paths:
+      - 'machado/api/**/*.py'
+  pull_request:
+    paths:
+      - 'machado/api/**/*.py'
+
+jobs:
+  format-check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install formatters
+        run: |
+          pip install black isort
+
+      - name: Check formatting with black
+        run: black --check machado/api/
+
+      - name: Check import sorting with isort
+        run: isort --check-only machado/api/
