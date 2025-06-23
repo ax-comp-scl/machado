@@ -6,7 +6,6 @@
 
 """Serializers."""
 import re
-import json
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import serializers
 

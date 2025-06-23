@@ -12,7 +12,6 @@ from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
 from .serializers import UserCreateSerializer, UserSerializer
-import re
 
 
 class PublicUserActions(viewsets.GenericViewSet):
@@ -54,7 +53,7 @@ class PublicUserActions(viewsets.GenericViewSet):
         email = request.data.get("email")
         password = request.data.get("password")
 
-        if email == None or password == None:
+        if email is None or password is None:
             return Response(
                 status=status.HTTP_400_BAD_REQUEST,
                 data="Email and password are required",
