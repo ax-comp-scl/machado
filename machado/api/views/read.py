@@ -996,35 +996,41 @@ class FeatureSimilarityViewSet(viewsets.GenericViewSet):
         """Dispatch."""
         return super(FeatureSimilarityViewSet, self).dispatch(*args, **kwargs)
 
+
 class HistoryListViewSet(viewsets.ViewSet):
     """Retrive all history of insertions."""
-    
+
     def list(self, request):
         """List"""
         paginate_by = 10
-        order_by = request.GET.get('ordering', '-created_at')
-        allowed_ordering_fields = ['created_at', '-created_at', 'another_field', '-another_field']
+        order_by = request.GET.get("ordering", "-created_at")
+        allowed_ordering_fields = [
+            "created_at",
+            "-created_at",
+            "another_field",
+            "-another_field",
+        ]
         if order_by not in allowed_ordering_fields:
-            order_by = '-created_at'
-        
-        search_term = request.GET.get('search', None)
+            order_by = "-created_at"
+
+        search_term = request.GET.get("search", None)
         history_list = History.objects.all()
         if search_term:
             history_list = history_list.filter(
-                Q(command__icontains=search_term) |
-                Q(description__icontains=search_term) 
+                Q(command__icontains=search_term)
+                | Q(description__icontains=search_term)
             )
-        
+
         history_list = history_list.order_by(order_by)
-        
+
         paginator = Paginator(history_list, paginate_by)
-        page_number = request.GET.get('page', 1)
+        page_number = request.GET.get("page", 1)
         page_obj = paginator.get_page(page_number)
 
         serializer = readSerializers.HistoryListSerializer(page_obj, many=True)
         response_data = {
-            'total_pages': paginator.num_pages,
-            'current_page': page_obj.number,
-            'results': serializer.data
+            "total_pages": paginator.num_pages,
+            "current_page": page_obj.number,
+            "results": serializer.data,
         }
         return Response(data=response_data, status=status.HTTP_200_OK)

@@ -4348,6 +4348,7 @@ class History(models.Model):
         self.finished_at = timezone.now()
         self.save()
 
+
 class Publication(models.Model):
     publication_id = models.AutoField(primary_key=True)
     command = models.CharField(max_length=255)

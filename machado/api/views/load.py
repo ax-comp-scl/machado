@@ -20,6 +20,7 @@ from rest_framework.response import Response
 
 from threading import Thread
 
+
 class OrganismViewSet(viewsets.GenericViewSet):
     """ViewSet for loading organism."""
 
@@ -52,9 +53,11 @@ class OrganismViewSet(viewsets.GenericViewSet):
 
     delete_request_body = openapi.Schema(
         type=openapi.TYPE_OBJECT,
-        properties = {
-            "organism": openapi.Schema(type=openapi.TYPE_STRING, description="Genus Species")
-        }
+        properties={
+            "organism": openapi.Schema(
+                type=openapi.TYPE_STRING, description="Genus Species"
+            )
+        },
     )
 
     @swagger_auto_schema(
@@ -108,19 +111,14 @@ class OrganismViewSet(viewsets.GenericViewSet):
         operation_summary=operation_summary,
         operation_description=operation_description,
     )
-    def destroy(self, request):
     def destroy(self, request, *args, **kwargs):
         """Handle the DELETE request for loading organism."""
         pk = kwargs.get("organism")
         thread = Thread(
             target=call_command,
             args=("remove_organism",),
-            kwargs=(
-                {
-                    "organism": pk
-                }
-            ),
-            daemon=True
+            kwargs=({"organism": pk}),
+            daemon=True,
         )
 
         thread.start()
@@ -132,6 +130,7 @@ class OrganismViewSet(viewsets.GenericViewSet):
             },
             status=status.HTTP_204_NO_CONTENT,
         )
+
 
 class RelationsOntologyViewSet(viewsets.GenericViewSet):
     """ViewSet for loading relations ontology."""
@@ -153,9 +152,11 @@ class RelationsOntologyViewSet(viewsets.GenericViewSet):
 
     delete_request_body = openapi.Schema(
         type=openapi.TYPE_OBJECT,
-        properties = {
-            "name": openapi.Schema(type=openapi.TYPE_STRING, description="CV Name (relationship)")
-        }
+        properties={
+            "name": openapi.Schema(
+                type=openapi.TYPE_STRING, description="CV Name (relationship)"
+            )
+        },
     )
 
     @swagger_auto_schema(
@@ -197,7 +198,7 @@ class RelationsOntologyViewSet(viewsets.GenericViewSet):
             },
             status=status.HTTP_200_OK,
         )
-    
+
     @swagger_auto_schema(
         request_body=delete_request_body,
         operation_summary=operation_summary,
@@ -216,12 +217,8 @@ class RelationsOntologyViewSet(viewsets.GenericViewSet):
         thread = Thread(
             target=call_command,
             args=("remove_ontology",),
-            kwargs=(
-                {
-                    "name": cvname
-                }
-            ),
-            daemon=True
+            kwargs=({"name": cvname}),
+            daemon=True,
         )
 
         thread.start()
@@ -233,6 +230,7 @@ class RelationsOntologyViewSet(viewsets.GenericViewSet):
             },
             status=status.HTTP_204_NO_CONTENT,
         )
+
 
 class PublicationViewSet(viewsets.GenericViewSet):
     """ViewSet for loading publications from .bib file."""
@@ -296,6 +294,7 @@ class PublicationViewSet(viewsets.GenericViewSet):
             status=status.HTTP_200_OK,
         )
 
+
 class SequenceOntologyViewSet(viewsets.GenericViewSet):
     """ViewSet for loading sequence ontology."""
 
@@ -303,7 +302,9 @@ class SequenceOntologyViewSet(viewsets.GenericViewSet):
     permission_classes = [IsAuthenticated]
     operation_summary = "Load sequence ontology"
     operation_description = operation_summary + "<br /><br />"
-    operation_description += "<li>URL: https://github.com/The-Sequence-Ontology/SO-Ontologies</li>"
+    operation_description += (
+        "<li>URL: https://github.com/The-Sequence-Ontology/SO-Ontologies</li>"
+    )
     operation_description += "<li>File: so.obo</li>"
 
     file_param = openapi.Parameter(
@@ -316,9 +317,11 @@ class SequenceOntologyViewSet(viewsets.GenericViewSet):
 
     delete_request_body = openapi.Schema(
         type=openapi.TYPE_OBJECT,
-        properties = {
-            "name": openapi.Schema(type=openapi.TYPE_STRING, description="CV Name (sequence)")
-        }
+        properties={
+            "name": openapi.Schema(
+                type=openapi.TYPE_STRING, description="CV Name (sequence)"
+            )
+        },
     )
 
     @swagger_auto_schema(
@@ -328,7 +331,6 @@ class SequenceOntologyViewSet(viewsets.GenericViewSet):
         operation_summary=operation_summary,
         operation_description=operation_description,
     )
-
     def create(self, request):
         """Handle the POST request for loading sequence ontology."""
         in_memory_file = request.FILES["file"]
@@ -361,7 +363,7 @@ class SequenceOntologyViewSet(viewsets.GenericViewSet):
             },
             status=status.HTTP_200_OK,
         )
-    
+
     @swagger_auto_schema(
         request_body=delete_request_body,
         operation_summary=operation_summary,
@@ -380,12 +382,8 @@ class SequenceOntologyViewSet(viewsets.GenericViewSet):
         thread = Thread(
             target=call_command,
             args=("remove_ontology",),
-            kwargs=(
-                {
-                    "name": cvname
-                }
-            ),
-            daemon=True
+            kwargs=({"name": cvname}),
+            daemon=True,
         )
 
         thread.start()
@@ -398,6 +396,7 @@ class SequenceOntologyViewSet(viewsets.GenericViewSet):
             status=status.HTTP_204_NO_CONTENT,
         )
 
+
 class GeneOntologyViewSet(viewsets.GenericViewSet):
     """ViewSet for loading gene ontology."""
 
@@ -405,7 +404,9 @@ class GeneOntologyViewSet(viewsets.GenericViewSet):
     permission_classes = [IsAuthenticated]
     operation_summary = "Load gene ontology"
     operation_description = operation_summary + "<br /><br />"
-    operation_description += "<li>URL: https://current.geneontology.org/ontology/</li>" # o link está cagado
+    operation_description += (
+        "<li>URL: https://current.geneontology.org/ontology/</li>"  # o link está cagado
+    )
     operation_description += "<li>File: go.obo</li>"
 
     file_param = openapi.Parameter(
@@ -418,9 +419,11 @@ class GeneOntologyViewSet(viewsets.GenericViewSet):
 
     delete_request_body = openapi.Schema(
         type=openapi.TYPE_OBJECT,
-        properties = {
-            "name": openapi.Schema(type=openapi.TYPE_STRING, description="CV Name (gene_ontology)")
-        }
+        properties={
+            "name": openapi.Schema(
+                type=openapi.TYPE_STRING, description="CV Name (gene_ontology)"
+            )
+        },
     )
 
     @swagger_auto_schema(
@@ -460,7 +463,7 @@ class GeneOntologyViewSet(viewsets.GenericViewSet):
             },
             status=status.HTTP_200_OK,
         )
-    
+
     @swagger_auto_schema(
         request_body=delete_request_body,
         operation_summary=operation_summary,
@@ -479,12 +482,8 @@ class GeneOntologyViewSet(viewsets.GenericViewSet):
         thread = Thread(
             target=call_command,
             args=("remove_ontology",),
-            kwargs=(
-                {
-                    "name": cvname
-                }
-            ),
-            daemon=True
+            kwargs=({"name": cvname}),
+            daemon=True,
         )
 
         thread.start()
@@ -496,6 +495,7 @@ class GeneOntologyViewSet(viewsets.GenericViewSet):
             },
             status=status.HTTP_204_NO_CONTENT,
         )
+
 
 class FastaViewSet(viewsets.GenericViewSet):
     """ViewSet for loading fasta"""
@@ -520,7 +520,7 @@ class FastaViewSet(viewsets.GenericViewSet):
         openapi.IN_QUERY,
         description="Species name (eg. Homo sapiens, Mus musculus)",
         required=True,
-        type=openapi.TYPE_STRING
+        type=openapi.TYPE_STRING,
     )
 
     soterm_param = openapi.Parameter(
@@ -528,7 +528,7 @@ class FastaViewSet(viewsets.GenericViewSet):
         openapi.IN_QUERY,
         description="SO Sequence Ontology Term (eg. chromosome, assembly) *",
         required=True,
-        type=openapi.TYPE_STRING
+        type=openapi.TYPE_STRING,
     )
 
     description_param = openapi.Parameter(
@@ -536,7 +536,7 @@ class FastaViewSet(viewsets.GenericViewSet):
         openapi.IN_QUERY,
         description="DESCRIPTION",
         required=False,
-        type=openapi.TYPE_STRING
+        type=openapi.TYPE_STRING,
     )
 
     url_param = openapi.Parameter(
@@ -544,7 +544,7 @@ class FastaViewSet(viewsets.GenericViewSet):
         openapi.IN_QUERY,
         description="URL",
         required=False,
-        type=openapi.TYPE_STRING
+        type=openapi.TYPE_STRING,
     )
 
     doi_param = openapi.Parameter(
@@ -552,7 +552,7 @@ class FastaViewSet(viewsets.GenericViewSet):
         openapi.IN_QUERY,
         description="DOI of a reference stored using load_publication (eg. 10.1111/s12122-012-1313-4)",
         required=False,
-        type=openapi.TYPE_STRING
+        type=openapi.TYPE_STRING,
     )
 
     nosequence_param = openapi.Parameter(
@@ -560,7 +560,7 @@ class FastaViewSet(viewsets.GenericViewSet):
         openapi.IN_QUERY,
         description="Don't load the sequences",
         required=False,
-        type=openapi.TYPE_BOOLEAN
+        type=openapi.TYPE_BOOLEAN,
     )
 
     cpu_param = openapi.Parameter(
@@ -568,9 +568,9 @@ class FastaViewSet(viewsets.GenericViewSet):
         openapi.IN_QUERY,
         description="Number of threads",
         required=False,
-        type=openapi.TYPE_INTEGER
+        type=openapi.TYPE_INTEGER,
     )
-    
+
     @swagger_auto_schema(
         manual_parameters=[
             file_param,
@@ -580,7 +580,7 @@ class FastaViewSet(viewsets.GenericViewSet):
             url_param,
             doi_param,
             nosequence_param,
-            cpu_param
+            cpu_param,
         ],
         operation_summary=operation_summary,
         operation_description=operation_description,
@@ -608,7 +608,7 @@ class FastaViewSet(viewsets.GenericViewSet):
                 {"error": "Organism is a required field."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        
+
         if not bool(soterm):
             return Response(
                 {"error": "soterm  is a required field."},
@@ -655,8 +655,10 @@ class FastaViewSet(viewsets.GenericViewSet):
             status=status.HTTP_200_OK,
         )
 
+
 class FeatureAnnotationViewSet(viewsets.GenericViewSet):
     """ViewSet for loading feature annotation"""
+
     serializer_class = loadSerializers.LoadFeatureAnnotationSerializer
     permission_classes = [IsAuthenticated]
     operation_summary = "Load feature annotation"
@@ -675,7 +677,7 @@ class FeatureAnnotationViewSet(viewsets.GenericViewSet):
         openapi.IN_QUERY,
         description="Species name (eg. Homo sapiens, Mus musculus)",
         required=True,
-        type=openapi.TYPE_STRING
+        type=openapi.TYPE_STRING,
     )
 
     soterm_param = openapi.Parameter(
@@ -683,7 +685,7 @@ class FeatureAnnotationViewSet(viewsets.GenericViewSet):
         openapi.IN_QUERY,
         description="SO Sequence Ontology Term (eg. chromosome, assembly) *",
         required=True,
-        type=openapi.TYPE_STRING
+        type=openapi.TYPE_STRING,
     )
 
     cvterm_param = openapi.Parameter(
@@ -691,7 +693,7 @@ class FeatureAnnotationViewSet(viewsets.GenericViewSet):
         openapi.IN_QUERY,
         description="cvterm.name from cv feature_property. (eg. display, note, product, alias, ontology_term, annotation)",
         required=True,
-        type=openapi.TYPE_STRING
+        type=openapi.TYPE_STRING,
     )
 
     doi_param = openapi.Parameter(
@@ -699,7 +701,7 @@ class FeatureAnnotationViewSet(viewsets.GenericViewSet):
         openapi.IN_QUERY,
         description="DOI of a reference stored using load_publication (eg. 10.1111/s12122-012-1313-4)",
         required=False,
-        type=openapi.TYPE_STRING
+        type=openapi.TYPE_STRING,
     )
 
     cpu_param = openapi.Parameter(
@@ -707,7 +709,7 @@ class FeatureAnnotationViewSet(viewsets.GenericViewSet):
         openapi.IN_QUERY,
         description="Number of threads",
         required=False,
-        type=openapi.TYPE_INTEGER
+        type=openapi.TYPE_INTEGER,
     )
 
     @swagger_auto_schema(
@@ -717,12 +719,11 @@ class FeatureAnnotationViewSet(viewsets.GenericViewSet):
             soterm_param,
             cvterm_param,
             doi_param,
-            cpu_param
+            cpu_param,
         ],
         operation_summary=operation_summary,
         operation_description=operation_description,
     )
-
     def create(self, request):
         """Handle the POST request for loading feature annotation."""
         file = request.FILES.get("file")
@@ -749,7 +750,7 @@ class FeatureAnnotationViewSet(viewsets.GenericViewSet):
                 {"error": "soterm is a required field."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        
+
         if not bool(cvterm):
             return Response(
                 {"error": "cvterm is a required field."},
@@ -788,10 +789,13 @@ class FeatureAnnotationViewSet(viewsets.GenericViewSet):
                 "doi": doi,
                 "cpu": cpu,
             },
-            status=status.HTTP_200_OK,)
+            status=status.HTTP_200_OK,
+        )
+
 
 class FeatureSequenceViewSet(viewsets.GenericViewSet):
     """ViewSet for loading feature sequence"""
+
     serializer_class = loadSerializers.LoadFeatureSequenceSerializer
     permission_classes = [IsAuthenticated]
     operation_summary = "Load feature sequence"
@@ -810,7 +814,7 @@ class FeatureSequenceViewSet(viewsets.GenericViewSet):
         openapi.IN_QUERY,
         description="Species name (eg. Homo sapiens, Mus musculus)",
         required=True,
-        type=openapi.TYPE_STRING
+        type=openapi.TYPE_STRING,
     )
 
     soterm_param = openapi.Parameter(
@@ -818,7 +822,7 @@ class FeatureSequenceViewSet(viewsets.GenericViewSet):
         openapi.IN_QUERY,
         description="SO Sequence Ontology Term (eg. chromosome, assembly) *",
         required=True,
-        type=openapi.TYPE_STRING
+        type=openapi.TYPE_STRING,
     )
 
     cpu_param = openapi.Parameter(
@@ -826,7 +830,7 @@ class FeatureSequenceViewSet(viewsets.GenericViewSet):
         openapi.IN_QUERY,
         description="Number of threads",
         required=False,
-        type=openapi.TYPE_INTEGER
+        type=openapi.TYPE_INTEGER,
     )
 
     @swagger_auto_schema(
@@ -838,7 +842,6 @@ class FeatureSequenceViewSet(viewsets.GenericViewSet):
         operation_summary=operation_summary,
         operation_description=operation_description,
     )
-
     def create(self, request):
         """Handle the POST request for loading feature sequence."""
         file = request.FILES.get("file")
@@ -891,10 +894,13 @@ class FeatureSequenceViewSet(viewsets.GenericViewSet):
                 "soterm": soterm,
                 "cpu": cpu,
             },
-            status=status.HTTP_200_OK,)
+            status=status.HTTP_200_OK,
+        )
+
 
 class FeaturePublicationViewSet(viewsets.GenericViewSet):
     """ViewSet for loading feature publication"""
+
     serializer_class = loadSerializers.LoadFeaturePublicationSerializer
     permission_classes = [IsAuthenticated]
     operation_summary = "Load feature publication"
@@ -913,7 +919,7 @@ class FeaturePublicationViewSet(viewsets.GenericViewSet):
         openapi.IN_QUERY,
         description="Species name (eg. Homo sapiens, Mus musculus)",
         required=False,
-        type=openapi.TYPE_STRING
+        type=openapi.TYPE_STRING,
     )
 
     cpu_param = openapi.Parameter(
@@ -921,19 +927,14 @@ class FeaturePublicationViewSet(viewsets.GenericViewSet):
         openapi.IN_QUERY,
         description="Number of threads",
         required=False,
-        type=openapi.TYPE_INTEGER
+        type=openapi.TYPE_INTEGER,
     )
 
     @swagger_auto_schema(
-        manual_parameters=[
-            file_param,
-            organism_param,
-            cpu_param
-        ],
+        manual_parameters=[file_param, organism_param, cpu_param],
         operation_summary=operation_summary,
         operation_description=operation_description,
     )
-
     def create(self, request):
         """Handle the POST request for loading feature publication."""
         file = request.FILES.get("file")
@@ -972,10 +973,13 @@ class FeaturePublicationViewSet(viewsets.GenericViewSet):
                 "organism": organism,
                 "cpu": cpu,
             },
-            status=status.HTTP_200_OK,)
+            status=status.HTTP_200_OK,
+        )
+
 
 class FeatureDBxRefViewSet(viewsets.GenericViewSet):
     """ViewSet for loading feature dbxrefs"""
+
     serializer_class = loadSerializers.LoadFeatureDBxRefSerializer
     permission_classes = [IsAuthenticated]
     operation_summary = "Load feature dbxrefs"
@@ -994,7 +998,7 @@ class FeatureDBxRefViewSet(viewsets.GenericViewSet):
         openapi.IN_QUERY,
         description="Species name (eg. Homo sapiens, Mus musculus)",
         required=True,
-        type=openapi.TYPE_STRING
+        type=openapi.TYPE_STRING,
     )
 
     soterm_param = openapi.Parameter(
@@ -1002,7 +1006,7 @@ class FeatureDBxRefViewSet(viewsets.GenericViewSet):
         openapi.IN_QUERY,
         description="SO Sequence Ontology Term (eg. chromosome, assembly) *",
         required=True,
-        type=openapi.TYPE_STRING
+        type=openapi.TYPE_STRING,
     )
 
     cpu_param = openapi.Parameter(
@@ -1010,20 +1014,14 @@ class FeatureDBxRefViewSet(viewsets.GenericViewSet):
         openapi.IN_QUERY,
         description="Number of threads",
         required=False,
-        type=openapi.TYPE_INTEGER
+        type=openapi.TYPE_INTEGER,
     )
 
     @swagger_auto_schema(
-        manual_parameters=[
-            file_param,
-            organism_param,
-            soterm_param,
-            cpu_param
-        ],
+        manual_parameters=[file_param, organism_param, soterm_param, cpu_param],
         operation_summary=operation_summary,
         operation_description=operation_description,
     )
-
     def create(self, request):
         """Handle the POST request for loading feature dbxrefs."""
         file = request.FILES.get("file")
@@ -1076,10 +1074,13 @@ class FeatureDBxRefViewSet(viewsets.GenericViewSet):
                 "soterm": soterm,
                 "cpu": cpu,
             },
-            status=status.HTTP_200_OK,)
-    
+            status=status.HTTP_200_OK,
+        )
+
+
 class GFFViewSet(viewsets.GenericViewSet):
     """ViewSet for loading GFF"""
+
     serializer_class = loadSerializers.GFFSerializer
     permission_classes = [IsAuthenticated]
     operation_summary = "Load GFF"
@@ -1100,7 +1101,7 @@ class GFFViewSet(viewsets.GenericViewSet):
         openapi.IN_QUERY,
         description="Species name (eg. Homo sapiens, Mus musculus)",
         required=True,
-        type=openapi.TYPE_STRING
+        type=openapi.TYPE_STRING,
     )
 
     ignore_param = openapi.Parameter(
@@ -1108,7 +1109,7 @@ class GFFViewSet(viewsets.GenericViewSet):
         openapi.IN_QUERY,
         description="List of feature types to ignore (eg. chromosome scaffold)",
         required=False,
-        type=openapi.TYPE_STRING
+        type=openapi.TYPE_STRING,
     )
 
     doi_param = openapi.Parameter(
@@ -1116,7 +1117,7 @@ class GFFViewSet(viewsets.GenericViewSet):
         openapi.IN_QUERY,
         description="DOI of a reference stored using load_publication (eg. 10.1111/s12122-012-1313-4)",
         required=False,
-        type=openapi.TYPE_STRING
+        type=openapi.TYPE_STRING,
     )
 
     qtl_param = openapi.Parameter(
@@ -1124,7 +1125,7 @@ class GFFViewSet(viewsets.GenericViewSet):
         openapi.IN_QUERY,
         description="Set this flag to handle GFF files from QTLDB",
         required=False,
-        type=openapi.TYPE_BOOLEAN
+        type=openapi.TYPE_BOOLEAN,
     )
 
     cpu_param = openapi.Parameter(
@@ -1133,9 +1134,9 @@ class GFFViewSet(viewsets.GenericViewSet):
         description="Number of threads",
         required=False,
         default=1,
-        type=openapi.TYPE_INTEGER
+        type=openapi.TYPE_INTEGER,
     )
-    
+
     @swagger_auto_schema(
         manual_parameters=[
             file_param,
@@ -1143,7 +1144,7 @@ class GFFViewSet(viewsets.GenericViewSet):
             ignore_param,
             doi_param,
             qtl_param,
-            cpu_param
+            cpu_param,
         ],
         operation_summary=operation_summary,
         operation_description=operation_description,
@@ -1164,11 +1165,11 @@ class GFFViewSet(viewsets.GenericViewSet):
                 {"error": "GFF file is required."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        
+
         if not tbiFile:
             return Response(
                 {"error": "Indexed GFF file is required."},
-                status=status.HTTP_400_BAD_REQUEST
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
         if not bool(organism):
@@ -1217,7 +1218,7 @@ class GFFViewSet(viewsets.GenericViewSet):
             },
             status=status.HTTP_200_OK,
         )
-    
+
     def destroy(self, request):
         """Handle the DELETE request for loading gff."""
         file = request.data.get("file")
@@ -1231,12 +1232,8 @@ class GFFViewSet(viewsets.GenericViewSet):
         thread = Thread(
             target=call_command,
             args=("remove_file",),
-            kwargs=(
-                {
-                    "file": file
-                }
-            ),
-            daemon=True
+            kwargs=({"file": file}),
+            daemon=True,
         )
 
         thread.start()

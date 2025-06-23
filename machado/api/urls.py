@@ -97,8 +97,8 @@ router.register(
 # loadViews
 
 router.register(
-    r"load/organism", 
-    loadViews.OrganismViewSet, 
+    r"load/organism",
+    loadViews.OrganismViewSet,
     basename="load_organism",
 )
 
@@ -116,7 +116,7 @@ router.register(
 
 router.register(
     r"load/publication",
-    loadViews.PublicationViewSet, 
+    loadViews.PublicationViewSet,
     basename="load_publication",
 )
 
@@ -133,34 +133,30 @@ router.register(
 )
 
 router.register(
-    r"load/feature_annotation", 
-    loadViews.FeatureAnnotationViewSet, 
-    basename='load_feature_annotation'
+    r"load/feature_annotation",
+    loadViews.FeatureAnnotationViewSet,
+    basename="load_feature_annotation",
 )
 
 router.register(
-    r"load/feature_sequence", 
-    loadViews.FeatureSequenceViewSet, 
-    basename='load_feature_sequence'
+    r"load/feature_sequence",
+    loadViews.FeatureSequenceViewSet,
+    basename="load_feature_sequence",
 )
 
 router.register(
-    r"load/feature_dbxrefs", 
-    loadViews.FeatureDBxRefViewSet, 
-    basename='load_feature_dbxrefs'
+    r"load/feature_dbxrefs",
+    loadViews.FeatureDBxRefViewSet,
+    basename="load_feature_dbxrefs",
 )
 
 router.register(
-    r"load/feature_publication", 
-    loadViews.FeaturePublicationViewSet, 
-    basename='load_feature_publication'
+    r"load/feature_publication",
+    loadViews.FeaturePublicationViewSet,
+    basename="load_feature_publication",
 )
 
-router.register(
-    r"load/gff",
-    loadViews.GFFViewSet,
-    basename="load_gff"
-)
+router.register(r"load/gff", loadViews.GFFViewSet, basename="load_gff")
 
 # history
 

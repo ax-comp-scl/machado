@@ -501,6 +501,7 @@ class FeatureLocationSerializer(serializers.Serializer):
 
 class HistoryListSerializer(serializers.ModelSerializer):
     """History serializer."""
+
     command = serializers.CharField()
     params = serializers.SerializerMethodField()
     description = serializers.CharField()
@@ -511,7 +512,14 @@ class HistoryListSerializer(serializers.ModelSerializer):
     def get_params(self, obj):
         params_str = obj.params or ""
 
-        fields = ["genus", "species", "abbreviation", "common_name", "infraspecific_name", "comment"]
+        fields = [
+            "genus",
+            "species",
+            "abbreviation",
+            "common_name",
+            "infraspecific_name",
+            "comment",
+        ]
         extracted = {}
 
         for field in fields:
@@ -539,4 +547,3 @@ class HistoryListSerializer(serializers.ModelSerializer):
             "finished_at",
             "exit_code",
         ]
-    
