@@ -9,4 +9,3 @@ venv
 /bin
 /lib
 *.cfg
-.env
