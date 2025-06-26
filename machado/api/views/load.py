@@ -108,7 +108,6 @@ class OrganismViewSet(viewsets.GenericViewSet):
         operation_summary=operation_summary,
         operation_description=operation_description,
     )
-    def destroy(self, request):
     def destroy(self, request, *args, **kwargs):
         """Handle the DELETE request for loading organism."""
         pk = kwargs.get("organism")
