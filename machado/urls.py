@@ -22,6 +22,7 @@ if "haystack" in settings.INSTALLED_APPS:
 
     urlpatterns = [
         re_path(r"api/", include("machado.api.urls"), name="api"),
+        re_path(r"account/", include("machado.account.urls"), name="account"),
         re_path(
             r"feature/",
             cache_page(CACHE_TIMEOUT)(feature.FeatureView.as_view()),
